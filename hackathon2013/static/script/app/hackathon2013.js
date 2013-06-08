@@ -91,6 +91,8 @@ var RoomListVM = function() {
         });
         sammy_app.setLocation('/room/'+sel_gr.id()+'?user='+login_name);
     };
+
+        
 };
 
 
@@ -178,6 +180,18 @@ var RoomDetailVM = function(room_id, as_user) {
 
         cy.on('tap', 'node', function(e){
           var node = e.cyTarget;
+
+          var user_id = node.data().id;
+          console.log("tap", user_id);
+
+        // TODO
+        // durch die Brust in's Knie -- wie geht das schlauer?
+    
+          var event = jQuery.Event("click");
+          event.user_id = user_id;
+          
+        $('#goToDetailButton').trigger(event)
+
           var neighborhood = node.neighborhood().add(node);
 
           cy.elements().addClass('faded');
@@ -296,6 +310,19 @@ var RoomDetailVM = function(room_id, as_user) {
         self.loading(false);
         // newEventsCallback(groupDetailEventCb.bind(self));
     });
+    
+    self.goToDetailView = function(vm, evt) {
+        if( !vm )
+            return;
+        console.log("goToDetailView");
+        console.log(evt);
+        console.log(as_user, room_id);
+        sammy_app.setLocation('/room/'+room_id+"/user/"+evt.user_id+"?user="+as_user);
+
+    };
+
+
+
 };
 
 

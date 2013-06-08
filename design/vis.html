@@ -117,6 +117,7 @@
             
             cy.on('tap', 'node', function(e){
               var node = e.cyTarget; 
+              console.log("tap", node)
               var neighborhood = node.neighborhood().add(node);
               
               cy.elements().addClass('faded');
@@ -189,7 +190,6 @@
           }
           */
         }
-      }
 
 function runTrace() {
 
