@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Bootstrap 101 Template</title>
+    <title>Gravity</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="{{ STATIC_URL }}css/gravity.less" rel="stylesheet/less" media="screen">
@@ -25,13 +25,13 @@
     <div class="container">
         <h1>Gravity</h1>
 
-          <h2>Wähl' die Location</h2>
+          <h2>Location</h2>
 
-        <ul class="roomlist" data-bind="foreach: rooms">
+        <ul class="roomlist unstyled" data-bind="foreach: rooms">
           <li class="room" data-bind="css: {selected: $parent.selectedGroup() && $parent.selectedGroup() === $data}, click: $parent.selectGroup, text: name"></li>
         </ul>
 
-    <h2>Wie heißt du?</h2>
+    <h2>Name</h2>
 
     <!-- ko if: errors().length -->
     <ul class="unstyled" data-bind="foreach: errors">
@@ -40,8 +40,8 @@
     <!-- /ko -->
 
     <form class="form-search">
-        <input type="text" data-bind="value: loginName" placeholder="name" />
-        <button type="submit" class="btn" data-bind="click: goToRoom">Los geht's!</button>
+        <input type="text" data-bind="value: loginName" placeholder="Name" />
+        <button type="submit" class="btn" data-bind="click: goToRoom">GO!</button>
     </form>
 
     </div>

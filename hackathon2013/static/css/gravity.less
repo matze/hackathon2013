@@ -1,32 +1,12 @@
-@aluminium1: #eeeeec;
-@aliminium2: #d3d7cf;
-@aluminium3: #babdb6;
-@aluminium6: #2e3436;
-@butter1: #fce94f;
-@butter2: #edd400;
-@butter3: #c4a000;
-@chameleon1: #8ae234;
-@chameleon2: #73d216;
-@chameleon3: #4e9a06;
-@chocolate1: #e9b96e;
-@chocolate2: #c17d11;
-@chocolate3: #8f5902;
-@orange2: #f57900;
-@orange3: #ce5c00;
-@plum1: #ad7fa8;
-@plum2: #75507b;
-@plum3: #5c3566;
-@scalet1: #ef2929;
-@scarlet2: #cc0000;
-@scarlet3: #a40000;
-@sky1: #729fcf;
-@sky2: #3465a4;
-@sky3: #204a87;
+@background: #1e1e20;
+@bodytext: #d9cb9e;
+@unselected: #374140;
+@selected: #dc3522;
+@node: #2a2c2b;
 
-@import url(http://fonts.googleapis.com/css?family=Roboto+Slab);
 @import url(http://fonts.googleapis.com/css?family=VT323);
-@import url(http://fonts.googleapis.com/css?family=Droid+Sans);
-@import url(http://fonts.googleapis.com/css?family=Slackey);
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700);
+@import url(http://fonts.googleapis.com/css?family=Squada+One);
 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -49,25 +29,55 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-h1
-{
-    font-size: 300%;
-    font-family: 'Slackey', cursive;
+body {
+  color: @bodytext;
+  background-color: @background;
+  /* background-image: url('/static/img/inflicted.png'); */
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 16pt;
+  font-weight: lighter;
+  margin: auto;
+  width: 400px;
 }
 
-h2
-{
-    font-size: 150%;
+h1 {
+  font-size: 72pt;
+  font-family: 'Squada One', 'Slackey', cursive;
+  text-transform: uppercase;
+  letter-spacing: .05em;
 }
 
-body
-{
-    color: @aluminium6;
-    background-image: url(http://trip-app.com/static/css/../img/layout/bg.png);
-    font-family: 'Droid Sans', sans-serif;
-    font-size: 120%;
-    margin: auto;
-    width: 400px;
+h2 {
+  font-weight: lighter;
+  letter-spacing: .05em;
+  margin: 1em 0 0.5em 0;
+  text-transform: uppercase;
+  font-size: 150%;
+}
+
+a, a:active, a:hover, p, span {
+  color: @selected;
+}
+
+input, button {
+  width: 100%;
+  padding: .5em;
+  margin: .5em 0;
+  border: 0;
+}
+
+input {
+  font-size: 12pt;
+}
+
+input:focus, button:hover {
+  box-shadow: 0 0 10px @bodytext;
+  border: none;
+}
+
+button {
+  font-size: 18pt;
+  font-weight: bold;
 }
 
 #graph {
@@ -76,48 +86,37 @@ body
   position: absolute;
 }
 
-a, a:active, a:hover, p, span
-{
-    color: @aluminium6;
+.container {
+  background-color: @background;
 }
 
-input, button
-{
+.unstyled {
+  li {
+    list-style-type: none;
+    margin: .5em 0;
+  }
+}
+
+.roomlist {
+  margin: 0;
+
+  li:hover {
+    background-color: @selected;
+  }
+
+  li {
+    transition: background-color 0.3s;
     width: 100%;
-    padding: 0;
-    border: 0;
-}
+    background-color: @unselected;
+    font-weight: lighter;
 
-.container
-{
-}
+    padding: .5em;
 
-.roomlist
-{
-
-    margin: 0;
-
-    li
-    {
-        list-style-type: none;
-    width: 100%;
-    background-color: @chameleon2;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    text-align: center;
-
-    &.selected
-    {
-        background-color: @plum1;
+    &.selected {
+        background-color: @selected;
     }
-
-    }
+  }
 }
-
-
-
 
 
 .border-radius(@radius) {
