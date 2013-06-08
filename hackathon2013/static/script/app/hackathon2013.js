@@ -136,20 +136,22 @@ var RoomDetailVM = function(room_id, as_user) {
           .css({
             'content': 'data(name)',
             'text-valign': 'center',
-            'color': 'white',
-            'text-outline-width': 2,
-            'text-outline-color': '#888',
+            'color': '#d9cb9e',
+            'text-outline-width': 4,
+            'text-outline-color': '#374140',
             'shape': 'rectangle',
             'height': 48,
             'width': 48,
             'font-size': 22,
             'font-family': 'Source Sans Pro, sans-serif',
-            'font-weight': 'bold'
-
+            'font-weight': 'bold',
+            'background-color': '#374140'
           })
         .selector('edge')
           .css({
-            'target-arrow-shape': 'triangle'
+            'target-arrow-shape': 'none',
+            'source-arrow-shape': 'none',
+            'line-color': '#374140'
           })
         .selector(':selected')
           .css({
