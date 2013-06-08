@@ -1,19 +1,19 @@
-# from django.db import models
-# from django.utils import timezone
+from django.db import models
+from django.utils import timezone
 
 
-# class Tag(models.Model):
-#     description = models.CharField(max_length=200)
+class Tag(models.Model):
+    label = models.CharField(max_length=200)
 
 
-# class User(models.Model):
-#     name = models.CharField(max_length=200)
-#     tags = models.ManyToManyField(Tag)
+class User(models.Model):
+    name = models.CharField(max_length=200)
+    tags = models.ManyToManyField(Tag)
 
 
-# class Room(models.Model):
-#     name = models.CharField(max_length=150)
-#     users = models.ManyToManyField(User)
+class Room(models.Model):
+    name = models.CharField(max_length=150)
+    users = models.ManyToManyField(User, null=True, blank=True)
 
 
 # class Event(models.Model):

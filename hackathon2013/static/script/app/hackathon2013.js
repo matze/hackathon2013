@@ -2,7 +2,7 @@ Hackathon = Ember.Application.create();
 
 
 
-Hackathon.Rooms = DS.Model.extend({
+Hackathon.Room = DS.Model.extend({
   name: DS.attr('string'),
   users: DS.hasMany('Hackathon.User')
 });
@@ -30,54 +30,65 @@ Hackathon.Store = DS.Store.extend({
 
 
 
-Hackathon.SessionView = Ember.View.extend({
-  templateName: 'session',
-  addRating: function(event) {
-    if (this.formIsValid()) {
-      var rating = this.buildRatingFromInputs(event);
-      this.get('controller').addRating(rating);
-      this.resetForm();
+Hackathon.RoomsView = Ember.View.extend({
+  addRoom: function(event) {
+    var name = this.get('name');
+    if (!name.trim()) {
+      alert("Please enter a name");
     }
-  },
-  buildRatingFromInputs: function(session) {
-    var score = this.get('score');
-    var feedback = this.get('feedback');
-    return Hackathon.Rating.createRecord(
-    { score: score,
-      feedback: feedback,
-      session: session
-    });
-  },
-  formIsValid: function() {
-    var score = this.get('score');
-    var feedback = this.get('feedback');
-    if (score === undefined || feedback === undefined || score.trim() === "" || feedback.trim() === "") {
-      return false;
-    }
-    return true;
-  },
-  resetForm: function() {
-    this.set('score', '');
-    this.set('feedback', '');
+    // var logged_in_user = this.get('logged_in_user');
+    // if (!logged_in_user.trim()) {
+    //   alert("Who are you?");
+    // }
+    var new_room = Hackathon.Room.createRecord({'name': name});
+    this.get('controller').addRoom(new_room);
+    this.set('name', '');
   }
 });
 
 
-
-Hackathon.SessionController = Ember.ObjectController.extend({
-  addRating: function(rating) {
+Hackathon.RoomsController = Ember.ArrayController.extend({
+  addRoom: function(room) {
     this.get('store').commit();
   }
 });
 
+
+
+Hackathon.RoomView = Ember.View.extend({
+  addUser: function(event) {
+    var name = this.get('name');
+    if (!name.trim()) {
+      alert("Please enter a name");
+    }
+    var new_user = Hackathon.User.createRecord({'name': name});
+    this.get('controller').addUser(new_user);
+    this.set('name', '');
+  }
+});
+
+
+Hackathon.RoomController = Ember.ObjectController.extend({
+  addUser: function(room) {
+    this.get('store').commit();
+  }
+});
+
+
 Hackathon.Router.map(function() {
-  this.route("room", { path : "/" });
-  this.route("session", { path : "/session/:session_id" });
-  this.route("speaker", { path : "/speaker/:speaker_id" });
+  this.route("rooms", {path : "/"});
+  this.route("room", { path : "/room/:room_id" });
+  this.route("user", { path : "/user/:user_id" });
 });
 
 Hackathon.RoomsRoute = Ember.Route.extend({
   model: function() {
-    return Hackathon.Rooms.find();
+    return Hackathon.Room.find();
+  }
+});
+Hackathon.RoomRoute = Ember.Route.extend({
+  model: function(options) {
+    Hackathon.User.find({'room': options.room_id});
+    return Hackathon.Room.find(options.room_id);
   }
 });
