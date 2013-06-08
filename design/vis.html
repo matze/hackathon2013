@@ -15,6 +15,29 @@
       }
     </style>
     <script type="text/javascript">
+      var cellSize = 12;
+
+      var gridWidth = 40;
+      var gridHeight = 30;
+      var gridRects = new Array(gridWidth);
+
+      var waves = [];
+      var traces = [];
+      var currentPosition = [];
+
+      var setupGrid = function(color) {
+        for (var i = 0; i < gridWidth; i++) {
+          gridRects[i] = new Array(gridHeight);
+
+          for (var j = 0; j < gridHeight; j++) {
+            var rect = new paper.Path.Rectangle(i * cellSize, j * cellSize, cellSize, cellSize);
+            var randomColor = Math.floor(Math.random() * 50);
+            rect.fillColor = color;
+            gridRects[i][j] = rect;
+          }
+        }
+      }
+
       window.onload = function () {
         $('#graph').cytoscape({
           minZoom: 1,
@@ -95,32 +118,84 @@
           }
         });
 
-        var canvas = document.getElementById('canvas1');//$('canvas1');
-        console.log(canvas);
-
+        var canvas = document.getElementById('background');
         paper.setup(canvas);
 
-        var drawGrid = function(numX, numY) {
-          var width = 8;
-          var height = 8;
+        setupGrid('#330033');
+        paper.view.draw();
 
-          for (var i = 0; i < numX; i++) {
-            for (var j = 0; j < numY; j++) {
-              var rect = new paper.Path.Rectangle(i * width, j * height, width, height);
-              var randomColor = Math.floor(Math.random() * 50);
-              rect.fillColor = '#55' + randomColor + '55';
+        paper.view.onFrame = function(event) {
+          /*
+          var i = traces.length;
+
+          while (i--) {
+            var trace = traces[i+1];
+
+            if (trace.x <= trace.x1) {
+              gridRects[trace.x][trace.y].fillColor = '#33' + Math.floor(Math.random() * 10) + '33';
+              trace.x += 1;
+              trace.error = trace.error - trace.dy;
+              if (trace.error < 0.0) {
+                trace.y += trace.ystep;
+                trace.error += trace.dx;
+              }
+            }
+            else {
+              traces.splice(i, 1);
             }
           }
-        }
+          */
 
-        drawGrid(80, 60);
-        paper.view.draw();
-}
+          /*
+          var i = waves.length;
+
+          while (i--) {
+            var wave = waves[i];
+
+            if (wave.distance > 5) {
+              waves.splice(i, 1);
+            }
+            else {
+              n = Math.floor(Math.pow(2, wave.distance));
+              angle_step = 2 * Math.PI / n;
+              angle = 0.0;
+
+              for (var i = 0; i < n; i++) {
+                x = Math.round(Math.cos(angle)) * wave.distance + wave.x;
+                y = Math.round(Math.sin(angle)) * wave.distance + wave.y;
+
+                if ((x >= 0) && (x < gridWidth) && (y >= 0) && (y < gridHeight)) {
+                  gridRects[x][y].fillColor = '#33a033';
+                }
+
+                angle += angle_step;
+              }
+
+              wave.distance += 1;
+            }
+          }
+          */
+        }
+      }
+
+      function runTrace() {
+        /*
+        var trace = { x: 2, y: 3,
+                      x0: 2, y0: 3, x1: 20, y1: 15,
+                      dx: 10-2, dy: 15-3,
+                      error: (10-2) / 2.0,
+                      ystep: 1 };
+        traces.push(trace);
+        var wave = { x: 10, y: 10, distance: 0 };
+        waves.push(wave);
+        */
+      }
     </script>
   </head>
   <body>
+    <p><a href="#" onclick="runTrace()">Trace!</a></p>
     <div id="graph">
-    <canvas style="position: absolute; z-index: -1;" id="canvas1" width="800" height="600"></canvas>
+      <canvas style="position: absolute; z-index: -1;" id="background" width="800" height="600"></canvas>
     </div>
   </body>
 </html>
