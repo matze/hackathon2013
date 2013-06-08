@@ -1,16 +1,7 @@
 /* Gravity */
 
 var sammy_app = null;
-
-
-var bnd = function(model, template) {
-    var element = document.getElementById('page');
-    ko.cleanNode(element);
-    ko.applyBindings({'name': template, 'data': model}, element);
-};
-/* Gravity */
-
-var sammy_app = null;
+var newEventsCallback = null;
 
 
 var bnd = function(model, template) {
@@ -31,9 +22,28 @@ var RoomModel = function(room_data) {
     assertHas(room_data, 'id');
     assertHas(room_data, 'name');
     return {
-      id: ko.observable(room_data.id),
-      name: ko.observable(room_data.name)
+        id: ko.observable(room_data.id),
+        name: ko.observable(room_data.name)
     };
+};
+
+
+var UserModel = function(user_data) {
+  this.id = ko.observable(user_data.id);
+  this.name = ko.observable(user_data.name);
+  this.tags = ko.observableArray(user_data.tags);
+  this.myself = user_data.myself || false;
+};
+
+
+ko.bindingHandlers.cytoscape = {
+  update: function(element, valueAccessor) {
+    var value = valueAccessor();
+    var valueUnwrapped = ko.utils.unwrapObservable(value);
+    if (valueUnwrapped) {
+      $(element).cytoscape(valueUnwrapped);
+    }
+  }
 };
 
 
@@ -84,24 +94,30 @@ var RoomListVM = function() {
 };
 
 
-var UserModel = function(user_data) {
-  this.id = ko.observable(user_data.id);
-  this.name = ko.observable(user_data.name);
-  this.tags = ko.observableArray(user_data.tags);
-  if (user_data.myself) {
-    this.myself = true;
-  }
-};
+var UserDetailVM = function(room_id, user_id, as_user) {
+    var self = this;
+    self.currentUser = ko.observable();
+    self.loading = ko.observable(false);
 
-
-ko.bindingHandlers.cytoscape = {
-  update: function(element, valueAccessor) {
-    var value = valueAccessor();
-    var valueUnwrapped = ko.utils.unwrapObservable(value);
-    if (valueUnwrapped) {
-      $(element).cytoscape(valueUnwrapped);
+    self.newTag = ko.observable();
+    self.addNewTag = function(vm, evt) {
+        var nTag = self.newTag();
+        if (!nTag) {
+            return;
+        }
+        $.post('/api/room/'+room_id+'/user/'+user_id+'/tag/', {'tag': nTag})
+        .done(function(response) {
+            console.log("tag added", response);
+        });
     }
-  }
+
+    $.get('/api/room/'+room_id+'/user/'+user_id+'/', {'user': as_user})
+    .then(function(response) {
+        self.currentUser(new UserModel(response.user));
+        self.loading(false);
+
+        console.log("now update events")
+    });
 };
 
 
@@ -110,6 +126,7 @@ var RoomDetailVM = function(room_id, as_user) {
     self.currentRoom = ko.observable();
     self.users = ko.observableArray();
     self.visualizationOptions = ko.observable();
+    self.loading = ko.observable();
 
     var visuOptions = {
       minZoom: 1,
@@ -244,17 +261,19 @@ var RoomDetailVM = function(room_id, as_user) {
         }
 
         self.visualizationOptions(visuOptions);
+
+        self.loading(false);
+        // newEventsCallback(groupDetailEventCb.bind(self));
     });
 };
 
 
 $(document).ready(function() {
+    newEventsCallback = ko.observable();
+
     sammy_app = new Sammy();
     sammy_app.get('/', function() {
-        var vm = new RoomListVM();
-        var element = document.getElementById('page');
-        ko.cleanNode(element);
-        ko.applyBindings({'name': 'RoomListTemplate', 'data': vm}, element);
+        bnd(new RoomListVM(), 'RoomListTemplate');
     });
     sammy_app.get(/^\/room\/(\d+)(\/?)$/, function(context, room_id) {
         var as_user = context.params.user;
@@ -262,6 +281,13 @@ $(document).ready(function() {
           alert("Please call as a user, i.e. /room/"+room_id+"/?user=Klaus");
         }
         bnd(new RoomDetailVM(room_id, as_user), 'RoomDetailTemplate');
+    });
+    sammy_app.get(/^\/room\/(\d+)\/user\/(\d+)(\/?)$/, function(context, room_id, user_id) {
+        var as_user = context.params.user;
+        if (!as_user) {
+          alert("Please call as a user, i.e. /room/"+room_id+"/user/"+user_id+"/?user=Klaus");
+        }
+        bnd(new UserDetailVM(room_id, user_id, as_user), 'UserDetailTemplate');
     });
     sammy_app.raise_errors = true;
     sammy_app.debug = true;
