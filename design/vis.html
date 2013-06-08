@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Foo</title>
+    <meta charset="utf-8">
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:700' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="lib/paper.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
+    <style>
+      #graph {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+      }
+    </style>
+    <script type="text/javascript">
+      window.onload = function () {
+        $('#graph').cytoscape({
+          minZoom: 1,
+          maxZoom: 1,
+          style: cytoscape.stylesheet()
+            .selector('node')
+              .css({
+                'content': 'data(name)',
+                'text-valign': 'center',
+                'color': 'white',
+                'text-outline-width': 2,
+                'text-outline-color': '#888',
+                'shape': 'rectangle',
+                'height': 48,
+                'width': 48,
+                'font-size': 22,
+                'font-family': 'Source Sans Pro, sans-serif',
+                'font-weight': 'bold'
+
+              })
+            .selector('edge')
+              .css({
+                'target-arrow-shape': 'triangle'
+              })
+            .selector(':selected')
+              .css({
+                'background-color': 'black',
+                'line-color': 'black',
+                'target-arrow-color': 'black',
+                'source-arrow-color': 'black'
+              })
+            .selector('.faded')
+              .css({
+                'opacity': 0.25,
+                'text-opacity': 0
+              }),
+          
+          elements: {
+            nodes: [
+              { data: { id: 'j', name: 'PB' } },
+              { data: { id: 'e', name: 'MV' } },
+              { data: { id: 'k', name: 'DR' } },
+              { data: { id: 'g', name: 'MV' } }
+            ],
+            edges: [
+              { data: { source: 'j', target: 'e' } },
+              { data: { source: 'j', target: 'k' } },
+              { data: { source: 'j', target: 'g' } },
+              { data: { source: 'e', target: 'j' } },
+              { data: { source: 'e', target: 'k' } },
+              { data: { source: 'k', target: 'j' } },
+              { data: { source: 'k', target: 'e' } },
+              { data: { source: 'k', target: 'g' } },
+              { data: { source: 'g', target: 'j' } }
+            ]
+          },
+          
+          ready: function(){
+            window.cy = this;
+            
+            // giddy up...
+            
+            cy.elements().unselectify();
+            
+            cy.on('tap', 'node', function(e){
+              var node = e.cyTarget; 
+              var neighborhood = node.neighborhood().add(node);
+              
+              cy.elements().addClass('faded');
+              neighborhood.removeClass('faded');
+            });
+            
+            cy.on('tap', function(e){
+              if( e.cyTarget === cy ){
+                cy.elements().removeClass('faded');
+              }
+            });
+          }
+        });
+
+        var canvas = document.getElementById('canvas1');//$('canvas1');
+        console.log(canvas);
+
+        paper.setup(canvas);
+
+        var drawGrid = function(numX, numY) {
+          var width = 8;
+          var height = 8;
+
+          for (var i = 0; i < numX; i++) {
+            for (var j = 0; j < numY; j++) {
+              var rect = new paper.Path.Rectangle(i * width, j * height, width, height);
+              var randomColor = Math.floor(Math.random() * 50);
+              rect.fillColor = '#55' + randomColor + '55';
+            }
+          }
+        }
+
+        drawGrid(80, 60);
+        paper.view.draw();
+}
+    </script>
+  </head>
+  <body>
+    <div id="graph">
+    <canvas style="position: absolute; z-index: -1;" id="canvas1" width="800" height="600"></canvas>
+    </div>
+  </body>
+</html>
