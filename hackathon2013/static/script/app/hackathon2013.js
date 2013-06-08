@@ -1,3 +1,4 @@
+/* Gravity */
 Hackathon = Ember.Application.create();
 
 
