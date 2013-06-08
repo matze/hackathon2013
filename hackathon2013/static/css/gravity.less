@@ -60,7 +60,8 @@ a, a:active, a:hover, p, span {
 }
 
 input, button {
-  width: 90%;
+  float: left;
+  /* width: 90%; */
   padding: .5em;
   margin: .5em 0;
   border: 0;
@@ -69,6 +70,8 @@ input, button {
 input {
   font-size: 12pt;
   padding: .8em;
+  width: 80%;
+  margin-right: 1em;
 }
 
 input:focus, button:hover {
@@ -77,7 +80,7 @@ input:focus, button:hover {
 }
 
 button {
-  font-size: 18pt;
+  font-size: 14pt;
   font-weight: bold;
   text-align: center;
 }
@@ -128,6 +131,7 @@ button {
      -moz-border-radius: @radius;
           border-radius: @radius;
 }
+
 .text-overflow() {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -135,56 +139,59 @@ button {
   -o-text-overflow: ellipsis;
   -moz-binding: url('bindings.xml#ellipsis');
 }
+
 @gray:             #666;
 @grayLighter:           #eee;
 @tagsColor: #b58e63;
 @tagsColorHover: #997d5c;
 
+
 ul.tags-holder{
-    li{
+    margin: 2em 1em 2em;
+    list-style-type: none;
+
+    li {
         a {
           display: block;
           text-decoration: none;
           position: relative;
-          color:#ffffff;
-          font-size: 12px;
           margin:0 20px 5px 0;
           float: left;
           padding:0;
+          color: #000;
 
           &:hover {
             text-decoration:none;
-            background: @grayLighter;
-            border-color: @gray;
 
-            .text, .arrow{
-              background-color: @tagsColorHover;
+            .text, .arrow {
+              color: @bodytext;
             }
           }
 
-          .text{
+          .text {
             display: inline-block;
             max-width: 120px;
             .text-overflow();
-            background-color: @tagsColor;
-            line-height: 12px;
-            height: 12px;
-            padding:5px 14px 5px 8px;
+            background-color: @node;
+            line-height: 16px;
+            height: 16px;
+            padding: 5px 14px 5px 8px;
             .border-radius(2px 0 0 2px);
+            color: #000;
           }
 
-          .arrow{
-            background-color: @tagsColor;
+          .arrow {
+            background-color: @node;
 
             .border-radius(2px);
             position: absolute;
-            top:3px;
+            top:1px;
             left:auto;
-            right: -8px;
+            right: -10px;
             border: none;
-            width: 16px;
-            height: 16px;
-            line-height: 16px;
+            width: 21px;
+            height: 21px;
+            line-height: 21px;
             text-align: center;
             -webkit-transform:rotate(45deg);
             -moz-transform:rotate(45deg);
@@ -192,7 +199,6 @@ ul.tags-holder{
             filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1.5);
             -ms-transform:rotate(45deg);
           }
-
         }
     }
 

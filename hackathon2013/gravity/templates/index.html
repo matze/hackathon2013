@@ -74,12 +74,12 @@
     <div class="container">
         <h1>Gravitee</h1>
 
-        <h3>
+        <h2>
             User
             <!-- ko if: currentUser() -->
             <span data-bind="text: currentUser().name"></span>
             <!-- /ko -->
-        </h3>
+        </h2>
 
       <!-- ko if: currentUser() && currentUser().tags().length -->
       <ul class="tags-holder" data-bind="foreach: currentUser().tags">
@@ -98,8 +98,10 @@
 
         <div>
             <form>
-                <input data-bind="value: newTag" placeholder="Add a Tag" />
-                <button data-bind="click: addNewTag">Add Tag</button>
+                <input data-bind="value: newTag" placeholder="Tag" />
+                <div style="overflow:hidden;">
+                  <button data-bind="click: addNewTag">Add</button>
+                </div>
             </form>
         </div>
       </div>
