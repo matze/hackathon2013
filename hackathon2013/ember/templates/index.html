@@ -32,10 +32,18 @@
           <h2>Wähl' die Location</h2>
 
         <ul class="roomlist">
-        <li data-room='klotze'>Klotze</li>
-        <li data-room='hackathon2013'>Hackathon 2013</li>
-        <li data-room='pokalfinale'>Pokalfinale</li>
+    {{#each room in controller}}
+    <li>{{#linkTo 'room' room}}{{ room.name }}{{/linkTo}}</li>
+    {{else}}
+    <li>Keine Räume bisher :(</li>
+    {{/each}}
         </ul>
+    <p>
+    <form>
+      {{view Ember.TextField placeholder="name" valueBinding="view.name"}}
+      <button {{action addRoom target="view"}} type="submit">Add Room</button>
+    </form>
+    </p>
 
     <h2>Wie heißt du?</h2>
 
@@ -44,23 +52,7 @@
     <button type="submit" class="btn">Los geht's!</button>
     </form>
 
-
-
-
-    {{#each room in controller}}
-      {{room.name}}<br />
-      {{#linkTo 'room' room}}View Room Details{{/linkTo}}<br /><br />
-    {{else}}
-      Keine Räume bisher :(
-    {{/each}}
-
-    <p>
-    <form>
-      {{view Ember.TextField placeholder="name" valueBinding="view.name"}}
-      <button {{action addRoom target="view"}} type="submit">Add Room</button>
-    </form>
-    </p>
-    </script>
+   </script>
 
     <script type="text/x-handlebars" data-template-name="room">
     Room
