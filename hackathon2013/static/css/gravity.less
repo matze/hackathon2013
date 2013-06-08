@@ -31,13 +31,13 @@ time, mark, audio, video {
 
 body {
   color: @bodytext;
-  background-color: @background;
-  /* background-image: url('/static/img/inflicted.png'); */
+  /* background-color: @background; */
+  background-image: url('/static/img/pixel.png');
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 16pt;
   font-weight: lighter;
   margin: auto;
-  width: 400px;
+  /* width: 400px; */
 }
 
 h1 {
@@ -60,7 +60,7 @@ a, a:active, a:hover, p, span {
 }
 
 input, button {
-  width: 100%;
+  width: 90%;
   padding: .5em;
   margin: .5em 0;
   border: 0;
@@ -68,6 +68,7 @@ input, button {
 
 input {
   font-size: 12pt;
+  padding: .8em;
 }
 
 input:focus, button:hover {
@@ -78,6 +79,7 @@ input:focus, button:hover {
 button {
   font-size: 18pt;
   font-weight: bold;
+  text-align: center;
 }
 
 #graph {
@@ -87,7 +89,11 @@ button {
 }
 
 .container {
-  background-color: @background;
+  background-color: fade(@background, 85%);
+  width: 45%;
+  padding: 1em;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .unstyled {
@@ -106,10 +112,8 @@ button {
 
   li {
     transition: background-color 0.3s;
-    width: 100%;
     background-color: @unselected;
     font-weight: lighter;
-
     padding: .5em;
 
     &.selected {
@@ -117,7 +121,6 @@ button {
     }
   }
 }
-
 
 .border-radius(@radius) {
   -webkit-border-radius: @radius;
