@@ -1,1 +1,8 @@
 *.pyc
+.DS_Store
+hackathon2013/.DS_Store
+hackathon2013/ember/.DS_Store
+hackathon2013/static/.DS_Store
+hackathon2013/static/script/.DS_Store
+hackathon2013/static/script/app/.DS_Store
+hackathon2013/static/script/gravity/.DS_Store
