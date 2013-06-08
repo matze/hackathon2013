@@ -123,10 +123,13 @@ var UserDetailVM = function(room_id, user_id, as_user) {
 };
 
 
-var RoomDetailVM = function(room_id, as_user) {
+var RoomDetailVM = function(room_id, as_user, hl_tag) {
     var self = this;
     self.currentRoom = ko.observable();
     self.users = ko.observableArray();
+    self.hl_tag = hl_tag;
+
+    console.log("parameters passed to RoomDetailVM", as_user, hl_tag, self.hl_tag)
     
     /* export, so that GWT can read it :-) */
     users = self.users;
@@ -199,6 +202,24 @@ var RoomDetailVM = function(room_id, as_user) {
           neighborhood.removeClass('faded');
         });
 
+        cy.on('cxttap', function(e){
+
+            hl_tag = self.hl_tag
+
+            console.log("cxttap");
+            var all_with_class = cy.$('.'+hl_tag);
+            console.log("all with class", hl_tag, ":", all_with_class)
+
+            all_with_class.animate({ css: {'background-color' : '#dc3522'}},
+                                   { duration: 500,
+                                     complete : function() {
+                                       all_with_class.delay(2000, function() {
+                                         all_with_class.animate({css: {'background-color': '#2a2cbb'}});
+                                       });
+                                     }
+                                   });
+        });
+
         cy.on('tap', function(e){
           if( e.cyTarget === cy ){
             cy.elements().removeClass('faded');
@@ -245,7 +266,7 @@ var RoomDetailVM = function(room_id, as_user) {
         ko.utils.arrayForEach(self.users(), function(user) {
             var color = Math.floor((user.name().charCodeAt(0) + Math.random() * 10) % 255).toString(16);
             visuOptions.elements.nodes.push(
-                {'data': {'id': String(user.id()), 'name': user.name(), 'color': '#37' + color + '40'}});
+                {'classes': user.tags().join(' '), 'data': {'id': String(user.id()), 'name': user.name(), 'color': '#37' + color + '40'}});
 
             ko.utils.arrayForEach(user.tags(), function(tag) {
                 if (!all_tags[tag]) {
@@ -338,10 +359,13 @@ $(document).ready(function() {
     });
     sammy_app.get(/^\/room\/(\d+)(\/?)$/, function(context, room_id) {
         var as_user = context.params.user;
+        var hl = context.params.hl;
+
+        console.log("hl=", hl);
         if (!as_user) {
           alert("Please call as a user, i.e. /room/"+room_id+"/?user=Klaus");
         }
-        bnd(new RoomDetailVM(room_id, as_user), 'RoomDetailTemplate');
+        bnd(new RoomDetailVM(room_id, as_user, hl), 'RoomDetailTemplate');
     });
     sammy_app.get(/^\/room\/(\d+)\/user\/(\d+)(\/?)$/, function(context, room_id, user_id) {
         var as_user = context.params.user;
