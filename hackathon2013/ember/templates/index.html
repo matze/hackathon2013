@@ -8,75 +8,64 @@
     <link href="{{ STATIC_URL }}css/gravity.less" rel="stylesheet/less" media="screen">
 
     <script src="{{ STATIC_URL }}script/vendor/jquery-1.9.1.js" type="text/javascript"></script>
-    <script src="{{ STATIC_URL }}script/vendor/handlebars-1.0.0-rc.4.js" type="text/javascript"></script>
-    <script src="{{ STATIC_URL }}script/vendor/ember-1.0.0-rc.5.js" type="text/javascript"></script>
-    <script src="{{ STATIC_URL }}script/vendor/ember-data.js" type="text/javascript"></script>
-    <script src="{{ STATIC_URL }}script/vendor/adapter.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/sammy.js/0.7.4/sammy.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/2.2.1/knockout-min.js" type="text/javascript"></script>
+
     <script src="{{ STATIC_URL }}script/vendor/bootstrap.min.js"></script>
     <script src="{{ STATIC_URL }}script/vendor/less-1.3.3.min.js"></script>
   </head>
   <body>
     {% verbatim %}
+    <div id="page" data-bind="template: $data">
+    </div>
 
-    <script type="text/x-handlebars" data-template-name="application">
-
+<script id="RoomListTemplate" type="text/html">
     <div class="container">
         <h1>Gravity</h1>
 
-      {{outlet}}
-    </div>
-    </script>
-
-    <script type="text/x-handlebars" data-template-name="rooms">
           <h2>Wähl' die Location</h2>
 
-        <ul class="roomlist">
-    {{#each room in controller}}
-    <li class="room">{{#linkTo 'room' room}}{{ room.name }}{{/linkTo}}</li>
-    {{else}}
-    <li>Keine Räume bisher :(</li>
-    {{/each}}
+        <ul class="roomlist" data-bind="foreach: rooms">
+          <li class="room" data-bind="css: {selected: $parent.selectedGroup() && $parent.selectedGroup() === $data}, click: $parent.selectGroup, text: name"></li>
         </ul>
-    <p>
-    <form>
-      {{view Ember.TextField placeholder="location" valueBinding="view.name"}}
-      <button {{action addRoom target="view"}} type="submit">Add Room</button>
-    </form>
-    </p>
 
     <h2>Wie heißt du?</h2>
 
+    <!-- ko if: errors().length -->
+    <ul class="unstyled" data-bind="foreach: errors">
+      <li data-bind="text: $data"></li>
+    </ul>
+    <!-- /ko -->
+
     <form class="form-search">
-        <input type="text" placeholder="name"><br />
-    <button type="submit" class="btn">Los geht's!</button>
+        <input type="text" data-bind="value: loginName" placeholder="name" />
+        <button type="submit" class="btn" data-bind="click: goToRoom">Los geht's!</button>
     </form>
 
-   </script>
+    </div>
+</script>
 
-    <script type="text/x-handlebars" data-template-name="room">
-    Room
+<script type="text/html" id="RoomDetailTemplate">
+    <div class="container">
+        <h1>Gravity</h1>
 
-    {{name}}
+        <h3>
+            Room
+            <!-- ko if: currentRoom() -->
+            <span data-bind="text: currentRoom().name"></span>
+            <!-- /ko -->
+        </h3>
 
-    <br />
-      {{#each user in users}}
-        {{user.name}}<br />
-        {{#linkTo 'user' user}}View user Details{{/linkTo}}<br /><br />
-        {{#each tag in user.tags}}
-          {{tag.label}}<br />
-        {{/each}}
-      {{else}}
-        Keine User bisher :(
-      {{/each}}
-
-    <p>
-    <form>
-      {{view Ember.TextField placeholder="name" valueBinding="view.name"}}
-      <button {{action addUser target="view"}} type="submit">Add User</button>
-    </form>
-    </p>
-    </script>
-
+        <ul data-bind="foreach: users">
+          <li>
+            <div data-bind="text: $data.name"></div>
+            <ul data-bind="foreach: $data.tags">
+              <li data-bind="text: $data"></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+</script>
 
     {% endverbatim %}
     <script src="{{ STATIC_URL }}script/app/hackathon2013.js" type="text/javascript"></script>
