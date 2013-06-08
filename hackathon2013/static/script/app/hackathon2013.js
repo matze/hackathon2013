@@ -242,7 +242,6 @@ var RoomDetailVM = function(room_id, as_user) {
         /* users_with_related_users: user -> [ user, [tags] ] */
         var users_with_related_users = {};
         for (var tag in all_tags) {
-        	console.log("tag",tag);
             var list_of_users_with_tag = all_tags[tag];
             ko.utils.arrayForEach(list_of_users_with_tag, function(user_id) {
             	
@@ -252,8 +251,6 @@ var RoomDetailVM = function(room_id, as_user) {
                 if (arr_without_myself) {
                 	// if there are more than 1 with the tag
                 	ko.utils.arrayForEach(arr_without_myself, function(related_user_id) {
-                		console.log("Adding",tag, user_id, related_user_id);
-                		
                 		var related_users = users_with_related_users[user_id];
                     	if(!related_users) {
                     		related_users = [];
