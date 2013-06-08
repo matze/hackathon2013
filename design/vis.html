@@ -13,6 +13,12 @@
         height: 100%;
         position: absolute;
       }
+
+      .selected
+      {
+          background-color: #ff0000;
+      }
+
     </style>
     <script type="text/javascript">
       var cellSize = 12;
@@ -73,7 +79,14 @@
               .css({
                 'opacity': 0.25,
                 'text-opacity': 0
-              }),
+                })
+            .selector('.explosion')
+              .css({
+                    'shape' : 'ellipse',
+                    'opacity' : 0.5,
+                    'background-color' : 'yellow'
+                      }),
+
           
           elements: {
             nodes: [
@@ -178,7 +191,28 @@
         }
       }
 
-      function runTrace() {
+function runTrace() {
+
+    source = cy.$('node#j');
+    tgt = cy.$('node#e');
+
+    function highlight( node, callback )
+    {
+
+        pos = node.position();
+
+        nd = cy.add({group: 'nodes', position: pos, classes: 'explosion'});
+
+        nd.animate({css : {width: 400, height : 400}, opacity: 0}, {duration: 1000, complete: function(){
+                cy.remove( nd )
+                if( typeof(callback) == "function")
+                    callback();
+                }});
+    }
+
+    highlight( source, function(){ highlight(tgt) } );
+        
+
         /*
         var trace = { x: 2, y: 3,
                       x0: 2, y0: 3, x1: 20, y1: 15,
