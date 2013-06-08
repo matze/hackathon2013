@@ -86,20 +86,111 @@ var UserModel = function(user_data) {
   this.tags = ko.observableArray(user_data.tags);
 };
 
+ko.bindingHandlers.cytoscape = {
+  init: function(element, valueAccessor) {
+    var value = valueAccessor();
+    console.log(value);
+    if (value)
+      $(element).cytoscape(value);
+  }
+}
 
 var RoomDetailVM = function(room_id, as_user) {
+    var self = this;
     self.currentRoom = ko.observable();
     self.users = ko.observableArray();
+    self.visualizationOptions = ko.observable();
 
     $.get('/api/room/'+room_id+'/', {'user': as_user})
     .then(function(response) {
         self.currentRoom(new RoomModel(response.room));
+
         self.users(
             ko.utils.arrayMap(response.users, function(user_data) {
                 return new UserModel(user_data);
             })
         );
         console.log('loaded');
+
+        self.visualizationOptions({
+          minZoom: 1,
+          maxZoom: 1,
+          style: cytoscape.stylesheet()
+            .selector('node')
+              .css({
+                'content': 'data(name)',
+                'text-valign': 'center',
+                'color': 'white',
+                'text-outline-width': 2,
+                'text-outline-color': '#888',
+                'shape': 'rectangle',
+                'height': 48,
+                'width': 48,
+                'font-size': 22,
+                'font-family': 'Source Sans Pro, sans-serif',
+                'font-weight': 'bold'
+
+              })
+            .selector('edge')
+              .css({
+                'target-arrow-shape': 'triangle'
+              })
+            .selector(':selected')
+              .css({
+                'background-color': 'black',
+                'line-color': 'black',
+                'target-arrow-color': 'black',
+                'source-arrow-color': 'black'
+              })
+            .selector('.faded')
+              .css({
+                'opacity': 0.25,
+                'text-opacity': 0
+              }),
+          
+          elements: {
+            nodes: [
+              { data: { id: 'j', name: 'PB' } },
+              { data: { id: 'e', name: 'MV' } },
+              { data: { id: 'k', name: 'DR' } },
+              { data: { id: 'g', name: 'MV' } }
+            ],
+            edges: [
+              { data: { source: 'j', target: 'e' } },
+              { data: { source: 'j', target: 'k' } },
+              { data: { source: 'j', target: 'g' } },
+              { data: { source: 'e', target: 'j' } },
+              { data: { source: 'e', target: 'k' } },
+              { data: { source: 'k', target: 'j' } },
+              { data: { source: 'k', target: 'e' } },
+              { data: { source: 'k', target: 'g' } },
+              { data: { source: 'g', target: 'j' } }
+            ]
+          },
+          
+          ready: function(){
+            window.cy = this;
+            console.log("Cyto");
+            
+            // giddy up...
+            
+            cy.elements().unselectify();
+            
+            cy.on('tap', 'node', function(e){
+              var node = e.cyTarget; 
+              var neighborhood = node.neighborhood().add(node);
+              
+              cy.elements().addClass('faded');
+              neighborhood.removeClass('faded');
+            });
+            
+            cy.on('tap', function(e){
+              if( e.cyTarget === cy ){
+                cy.elements().removeClass('faded');
+              }
+            });
+          }
+        });
     });
 };
 

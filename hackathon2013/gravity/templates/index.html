@@ -13,6 +13,8 @@
 
     <script src="{{ STATIC_URL }}script/vendor/bootstrap.min.js"></script>
     <script src="{{ STATIC_URL }}script/vendor/less-1.3.3.min.js"></script>
+
+    <script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
   </head>
   <body>
     {% verbatim %}
@@ -56,14 +58,18 @@
             <!-- /ko -->
         </h3>
 
-        <ul data-bind="foreach: users">
-          <li>
-            <div data-bind="text: $data.name"></div>
-            <ul data-bind="foreach: $data.tags">
-              <li data-bind="text: $data"></li>
-            </ul>
-          </li>
-        </ul>
+        <div id="graph" data-bind="cytoscape: visualizationOptions">
+          <canvas style="position: absolute; z-index: -1;" id="background" width="800" height="600"></canvas>
+        </div>
+
+        <!-- <ul data-bind="foreach: users"> -->
+        <!--   <li> -->
+        <!--     <div data-bind="text: $data.name"></div> -->
+        <!--     <ul data-bind="foreach: $data.tags"> -->
+        <!--       <li data-bind="text: $data"></li> -->
+        <!--     </ul> -->
+        <!--   </li> -->
+        <!-- </ul> -->
       </div>
 </script>
 
