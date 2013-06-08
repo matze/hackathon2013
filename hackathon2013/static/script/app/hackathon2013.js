@@ -167,7 +167,6 @@ var RoomDetailVM = function(room_id, as_user) {
           }),
       ready: function(){
         window.cy = this;
-        console.log("Cyto");
 
         // giddy up...
 
@@ -224,7 +223,6 @@ var RoomDetailVM = function(room_id, as_user) {
         var all_tags = {};
         var edges = [];
         ko.utils.arrayForEach(self.users(), function(user) {
-            console.log("node", user.id(), user.name(), user.tags());
             visuOptions.elements.nodes.push(
                 {'data': {'id': String(user.id()), 'name': user.name()}});
             ko.utils.arrayForEach(user.tags(), function(tag) {
@@ -252,7 +250,6 @@ var RoomDetailVM = function(room_id, as_user) {
             for (var user_id in edges_for_tag_per_user) {
                 var relation_partners = edges_for_tag_per_user[user_id];
                 ko.utils.arrayForEach(relation_partners, function(relation_partner) {
-                    console.log("ed",tag, user_id, relation_partner);
                     visuOptions.elements.edges.push(
                         {'data': {
                             'source':  String(user_id),
