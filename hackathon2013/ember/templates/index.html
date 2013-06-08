@@ -5,7 +5,6 @@
     <title>Bootstrap 101 Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="{{ STATIC_URL }}css/gravity.less" rel="stylesheet/less" media="screen">
 
     <script src="{{ STATIC_URL }}script/vendor/jquery-1.9.1.js" type="text/javascript"></script>
@@ -33,14 +32,14 @@
 
         <ul class="roomlist">
     {{#each room in controller}}
-    <li>{{#linkTo 'room' room}}{{ room.name }}{{/linkTo}}</li>
+    <li class="room">{{#linkTo 'room' room}}{{ room.name }}{{/linkTo}}</li>
     {{else}}
     <li>Keine Räume bisher :(</li>
     {{/each}}
         </ul>
     <p>
     <form>
-      {{view Ember.TextField placeholder="name" valueBinding="view.name"}}
+      {{view Ember.TextField placeholder="location" valueBinding="view.name"}}
       <button {{action addRoom target="view"}} type="submit">Add Room</button>
     </form>
     </p>
@@ -48,7 +47,7 @@
     <h2>Wie heißt du?</h2>
 
     <form class="form-search">
-        <input type="text" class="input-medium search-query"><br />
+        <input type="text" placeholder="name"><br />
     <button type="submit" class="btn">Los geht's!</button>
     </form>
 
@@ -81,6 +80,7 @@
 
     {% endverbatim %}
     <script src="{{ STATIC_URL }}script/app/hackathon2013.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/gravity-core.js" type="text/javascript"></script>
   </body>
 </html>
 
