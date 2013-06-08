@@ -144,14 +144,14 @@ var RoomDetailVM = function(room_id, as_user) {
             'text-valign': 'center',
             'color': '#d9cb9e',
             'text-outline-width': 4,
-            'text-outline-color': '#374140',
+            'text-outline-color': 'data(color)',
             'shape': 'rectangle',
             'height': 48,
             'width': 48,
             'font-size': 22,
             'font-family': 'Source Sans Pro, sans-serif',
             'font-weight': 'bold',
-            'background-color': '#374140'
+            'background-color': 'data(color)' //'#374140'
           })
         .selector('edge')
           .css({
@@ -243,9 +243,10 @@ var RoomDetailVM = function(room_id, as_user) {
         var all_tags = {};
         var edges = [];
         ko.utils.arrayForEach(self.users(), function(user) {
-            console.log("node", user.id(), user.name(), user.tags());
+            var color = Math.floor((user.name().charCodeAt(0) + Math.random() * 10) % 255).toString(16);
             visuOptions.elements.nodes.push(
-                {'data': {'id': String(user.id()), 'name': user.name()}});
+                {'data': {'id': String(user.id()), 'name': user.name(), 'color': '#37' + color + '40'}});
+
             ko.utils.arrayForEach(user.tags(), function(tag) {
                 if (!all_tags[tag]) {
                     all_tags[tag] = [user.id()];
@@ -254,6 +255,7 @@ var RoomDetailVM = function(room_id, as_user) {
                 }
             });
         });
+
         /* users_with_related_users: user -> [ user, [tags] ] */
         var users_with_related_users = {};
         for (var tag in all_tags) {
