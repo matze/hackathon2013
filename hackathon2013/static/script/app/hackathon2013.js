@@ -62,6 +62,12 @@ var RoomListVM = function() {
 };
 
 
+var UserModel = function(user_data) {
+  this.name = ko.observable(user_data.name);
+  this.tags = ko.observableArray(user_data.tags);
+};
+
+
 var RoomDetailVM = function(room_id, as_user) {
     self.currentRoom = ko.observable();
     self.users = ko.observableArray();
