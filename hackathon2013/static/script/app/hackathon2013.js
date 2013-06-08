@@ -111,7 +111,7 @@ var RoomDetailVM = function(room_id, as_user) {
     self.users = ko.observableArray();
     self.visualizationOptions = ko.observable();
 
-    var visualizationOptions = {
+    var visuOptions = {
       minZoom: 1,
       maxZoom: 1,
       style: cytoscape.stylesheet()
@@ -179,6 +179,7 @@ var RoomDetailVM = function(room_id, as_user) {
                 return new UserModel(user_data);
             })
         );
+
         // visualizationOptions.elements = {
         //     nodes: [
         //       { data: { id: 'j', name: 'PB' } },
@@ -198,14 +199,15 @@ var RoomDetailVM = function(room_id, as_user) {
         //       { data: { source: 'g', target: 'j' } }
         //     ]
         // };
-        visualizationOptions.elements = {nodes: [], edges: []};
+
+        visuOptions.elements = {nodes: [], edges: []};
 
         var all_tags = {};
         var edges = [];
         ko.utils.arrayForEach(self.users(), function(user) {
-            console.log(user.id(), user.name(), user.tags())
-            visualizationOptions.elements.nodes.push(
-                {data: {id: user.id(), name: user.name()}});
+            console.log("node", user.id(), user.name(), user.tags());
+            visuOptions.elements.nodes.push(
+                {'data': {'id': String(user.id()), 'name': user.name()}});
             ko.utils.arrayForEach(user.tags(), function(tag) {
                 if (!all_tags[tag]) {
                     all_tags[tag] = [user.id()];
@@ -231,13 +233,17 @@ var RoomDetailVM = function(room_id, as_user) {
             for (var user_id in edges_for_tag_per_user) {
                 var relation_partners = edges_for_tag_per_user[user_id];
                 ko.utils.arrayForEach(relation_partners, function(relation_partner) {
-                    visualizationOptions.elements.edges.push(
-                        {data: {source: user_id, target: relation_partner}});
+                    console.log("ed",tag, user_id, relation_partner);
+                    visuOptions.elements.edges.push(
+                        {'data': {
+                            'source':  String(user_id),
+                            'target':  String(relation_partner)
+                        }});
                 });
             }
         }
 
-        self.visualizationOptions(visualizationOptions);
+        self.visualizationOptions(visuOptions);
     });
 };
 
