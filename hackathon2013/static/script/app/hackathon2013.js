@@ -157,7 +157,8 @@ var RoomDetailVM = function(room_id, as_user) {
           .css({
             'target-arrow-shape': 'none',
             'source-arrow-shape': 'none',
-            'line-color': '#374140'
+            'line-color': '#374140',
+            'width' : 'data(weight)'
           })
         .selector(':selected')
           .css({

@@ -37,6 +37,9 @@ def get_json_event(event):
 def room_list_view(request):
     return get_json_response({'rooms': [get_json_room(room) for room in Room.objects.all()]})
 
+def room_history_view(request, room_id, event_id):
+    pass
+
 
 def room_detail_view(request, room_id):
     user_name = request.GET.get('user', None)
