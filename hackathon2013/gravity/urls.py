@@ -1,5 +1,4 @@
-from hackathon2013.ember.views import (
-    #room_user_list_view,
+from hackathon2013.gravity.views import (
     room_detail_view,
     room_list_view
 )

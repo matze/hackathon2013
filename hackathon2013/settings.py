@@ -73,7 +73,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'rest_framework',
-    'hackathon2013.ember',
+    'hackathon2013.gravity',
 )
 
 LOGGING = {

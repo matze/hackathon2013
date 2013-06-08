@@ -1,8 +1,8 @@
-from django.views.generic import TemplateView
-from rest_framework import generics, serializers
-from hackathon2013.ember.models import Tag, User, Room
-from django.http import HttpResponse
 from functools import wraps
+from django.views.generic import TemplateView
+from django.http import HttpResponse
+from rest_framework import generics, serializers
+from hackathon2013.gravity.models import Tag, User, Room
 import json
 
 

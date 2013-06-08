@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand
-from hackathon2013.ember.models import create_event, Room
+from hackathon2013.gravity.models import create_event, Room
 import random
 import datetime
 
