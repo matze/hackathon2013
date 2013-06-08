@@ -125,6 +125,10 @@ var RoomDetailVM = function(room_id, as_user) {
     var self = this;
     self.currentRoom = ko.observable();
     self.users = ko.observableArray();
+    
+    /* export, so that GWT can read it :-) */
+    users = self.users;
+
     self.visualizationOptions = ko.observable();
     self.loading = ko.observable();
 
@@ -220,9 +224,11 @@ var RoomDetailVM = function(room_id, as_user) {
 
         visuOptions.elements = {nodes: [], edges: []};
 
+        /* all_tags: tag -> {users with this tag} */
         var all_tags = {};
         var edges = [];
         ko.utils.arrayForEach(self.users(), function(user) {
+            console.log("node", user.id(), user.name(), user.tags());
             visuOptions.elements.nodes.push(
                 {'data': {'id': String(user.id()), 'name': user.name()}});
             ko.utils.arrayForEach(user.tags(), function(tag) {
@@ -233,30 +239,59 @@ var RoomDetailVM = function(room_id, as_user) {
                 }
             });
         });
+        /* users_with_related_users: user -> [ user, [tags] ] */
+        var users_with_related_users = {};
         for (var tag in all_tags) {
+        	console.log("tag",tag);
             var list_of_users_with_tag = all_tags[tag];
-            var edges_for_tag_per_user = {};
             ko.utils.arrayForEach(list_of_users_with_tag, function(user_id) {
-                if (!edges_for_tag_per_user[user_id]) {
-                    // make a copy
-                    var arr_without_myself = list_of_users_with_tag.slice();
-                    arr_without_myself.splice(arr_without_myself.indexOf(user_id));
-                    if (arr_without_myself) {
-                        edges_for_tag_per_user[user_id] = arr_without_myself;
-                    }
+            	
+            	// make a copy
+                var arr_without_myself = list_of_users_with_tag.slice();
+                arr_without_myself.splice(arr_without_myself.indexOf(user_id));
+                if (arr_without_myself) {
+                	// if there are more than 1 with the tag
+                	ko.utils.arrayForEach(arr_without_myself, function(related_user_id) {
+                		console.log("Adding",tag, user_id, related_user_id);
+                		
+                		var related_users = users_with_related_users[user_id];
+                    	if(!related_users) {
+                    		related_users = [];
+                    		related_users[ related_user_id ] = [ tag ];
+                    		users_with_related_users[user_id] = related_users;
+                    	} else {
+                    		var tags = related_users[related_user_id];
+                    		if(!tags) {
+                    			related_users[related_user_id] = [tag];
+                    		} else {
+                    			tags.push(tag);
+                    		}
+                    	}
+                	});
                 }
+                
             });
-
-            for (var user_id in edges_for_tag_per_user) {
-                var relation_partners = edges_for_tag_per_user[user_id];
-                ko.utils.arrayForEach(relation_partners, function(relation_partner) {
-                    visuOptions.elements.edges.push(
-                        {'data': {
-                            'source':  String(user_id),
-                            'target':  String(relation_partner)
-                        }});
-                });
-            }
+            
+        }
+        
+        /* create final edges */
+        for (var user_id in users_with_related_users) {
+        	var related_users = users_with_related_users[user_id];
+        	if(related_users) {
+        		for(var related_user_id in related_users) {
+        			
+        				var related_tags = related_users[related_user_id];
+        				var edgeCount = related_tags.length;
+        				console.log("edge",user_id, edgeCount, related_user_id);
+        				visuOptions.elements.edges.push(
+        						{'data': {
+        							'source':  String(user_id),
+        							'target':  String(related_user_id),
+        							'weight': String(edgeCount)
+        						}});
+        			
+        		}
+        	}
         }
 
         self.visualizationOptions(visuOptions);
