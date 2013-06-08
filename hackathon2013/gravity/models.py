@@ -18,15 +18,21 @@ class User(models.Model):
 
 class Event(models.Model):
     user = models.ForeignKey(User, related_name='ratings')
-    tag = models.ForeignKey(Tag, related_name='ratings')
+    tag = models.ForeignKey(Tag, related_name='ratings', null=True, blank=True)
     timestamp = models.DateTimeField(default=timezone.now)
 
 
-def create_event(room, user_name, tag_label, timestamp=None):
+def create_event(room, user_name, tag_label=None, timestamp=None):
+    if not timestamp:
+        timestamp = timezone.now()
+    kw = {'timestamp': timestamp}
     user, _created = User.objects.get_or_create(name=user_name, room=room)
-    tag, _created = Tag.objects.get_or_create(label=tag_label)
-    user.tags.add(tag)
-    evt = Event.objects.create(
-        user=user, tag=tag, timestamp=timestamp
-    )
+    kw['user'] = user
+
+    if tag_label:
+        tag, _created = Tag.objects.get_or_create(label=tag_label)
+        kw['tag'] = tag
+        user.tags.add(tag)
+
+    evt = Event.objects.create(**kw)
     return evt

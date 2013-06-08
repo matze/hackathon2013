@@ -58,12 +58,16 @@ var RoomListVM = function() {
 
     self.loginName = ko.observable();
     self.goToRoom = function(vm, evt) {
+        if (!vm) {
+            return;
+        }
+        var sel_gr = vm.selectedGroup();
+        var login_name = vm.loginName();
         self.errors([]);
-        console.log("goToRoom", vm, !vm.loginName(), !vm.selectedGroup())
-        if (!(vm.loginName() && vm.loginName().trim())) {
+        if (!(login_name && login_name.trim())) {
           self.errors.push("Bitte gib einen Namen ein um dich einzuloggen");
         }
-        if (!vm.selectedGroup()) {
+        if (!sel_gr) {
           self.errors.push("Bitte wähle eine Gruppe aus");
         }
 
@@ -76,7 +80,11 @@ var RoomListVM = function() {
 
         console.log(self.errors(), " <- username" )
 
-        sammy_app.setLocation('/room/'+self.selectedGroup().id()+'?user='+self.loginName());
+        $.post('/api/room/'+sel_gr.id()+'/login/', {'user': login_name})
+        .then(function(resp) {
+            console.log("Login and user created", resp);
+        });
+        sammy_app.setLocation('/room/'+sel_gr.id()+'?user='+login_name);
     };
 };
 
@@ -205,6 +213,9 @@ $(document).ready(function() {
     });
     sammy_app.get(/^\/room\/(\d+)(\/?)$/, function(context, room_id) {
         var as_user = context.params.user;
+        if (!as_user) {
+          alert("Please call as a user, i.e. /room/"+room_id+"/?user=Klaus");
+        }
         bnd(new RoomDetailVM(room_id, as_user), 'RoomDetailTemplate');
     });
     sammy_app.raise_errors = true;

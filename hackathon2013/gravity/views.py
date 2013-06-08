@@ -2,7 +2,7 @@ from functools import wraps
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 from rest_framework import generics, serializers
-from hackathon2013.gravity.models import Tag, User, Room
+from hackathon2013.gravity.models import Tag, User, Room, create_event
 import json
 
 
@@ -15,53 +15,61 @@ def get_json_response(response_content, status=200):
     return HttpResponse(json.dumps(response_content, separators=(',', ':')), content_type, status)
 
 
-def ret_json_resp(func):
-    @wraps(func)
-    def inner(request, *args, **kwargs):
-        func_result = func(
-            request=request,
-            *args, **kwargs
-        )
-        return get_json_response(func_result)
-    return inner
-
-
-@ret_json_resp
 def room_list_view(request):
-    return {
-        'rooms': [
-            {
-                'id': room.id,
-                'name': room.name
-            }
-            for room in Room.objects.all()
-        ]
-    }
+    return get_json_response({
+        'rooms': [get_json_room(room) for room in Room.objects.all()]
+    })
+
+def get_json_room(room):
+    return {'id': room.id, 'name': room.name}
 
 
-@ret_json_resp
 def room_detail_view(request, pk):
     room = Room.objects.get(pk=pk)
-    users = [
-        {
-            'id': user.id,
-            'name': user.name,
-            'tags': [t.label for t in user.tags.all()]
-        }
-        for user in room.user_set.all()
-    ]
+    users = [get_json_user(user) for user in room.user_set.all()]
+    return get_json_response({'room': get_json_room(room), 'users': users})
+
+
+def get_json_user(user):
     return {
-        'room': {
-            'id': room.id,
-            'name': room.name
-        },
-        'users': users
+        'id': user.id,
+        'name': user.name,
+        'tags': [t.label for t in user.tags.all()]
     }
 
 
-# def room_user_list_view(request, room_id):
-#     return
+def get_json_event(event):
+    ret = {
+        'id': event.id,
+        'user': get_json_user(event.user)
+    }
+    if event.tag_id:
+        ret['tag'] = event.tag.label,
+    return ret
 
+
+def login_view(request, room_id):
+    user = request.POST.get('user', None)
+    if not user:
+        return HttpResponse(content="Missing: user", status=400)
+
+    room = Room.objects.get(id=room_id)
+
+    u, created = User.objects.get_or_create(name=user, room=room)
+    return get_json_response({'ok': true})
+
+
+def room_create_event_view(request, room_id):
+    user = request.POST.get('user', None)
+    if not user:
+        return HttpResponse(content="Missing: user", status=400)
+
+    room = Room.objects.get(id=room_id)
+
+    tag = request.POST.get('tag', None)
+
+    event = create_event(room, user_name=user, tag_label=tag, timestamp=None)
+    return get_json_response(get_json_event(event))
 
 # class RoomSerializer(serializers.ModelSerializer):
 #     #users = serializers.ManyPrimaryKeyRelatedField()
