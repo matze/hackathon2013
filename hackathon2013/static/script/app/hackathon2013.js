@@ -1,3 +1,4 @@
+/* Gravity */
 Hackathon = Ember.Application.create();
 
 
@@ -74,7 +75,10 @@ Hackathon.RoomController = Ember.ObjectController.extend({
   }
 });
 
-
+Hackathon.Router = Ember.Router.extend({
+  enableLogging: true,
+  location: 'history'
+});
 Hackathon.Router.map(function() {
   this.route("rooms", {path : "/"});
   this.route("room", { path : "/room/:room_id" });
