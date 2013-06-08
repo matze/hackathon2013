@@ -71,18 +71,13 @@ var RoomListVM = function() {
           self.errors.push("Bitte wähle eine Gruppe aus");
         }
 
-        console.log("#errors: ", self.errors().length )
-
-        if( self.errors().length )
-        {
+        if(self.errors().length){
             return;
         }
 
-        console.log(self.errors(), " <- username" )
-
         $.post('/api/room/'+sel_gr.id()+'/login/', {'user': login_name})
         .then(function(resp) {
-            console.log("Login and user created", resp);
+            // console.log("Login and user created", resp);
         });
         sammy_app.setLocation('/room/'+sel_gr.id()+'?user='+login_name);
     };
@@ -90,24 +85,90 @@ var RoomListVM = function() {
 
 
 var UserModel = function(user_data) {
+  this.id = ko.observable(user_data.id);
   this.name = ko.observable(user_data.name);
   this.tags = ko.observableArray(user_data.tags);
+  if (user_data.myself) {
+    this.myself = true;
+  }
 };
 
+
 ko.bindingHandlers.cytoscape = {
-  init: function(element, valueAccessor) {
+  update: function(element, valueAccessor) {
     var value = valueAccessor();
-    console.log(value);
-    if (value)
-      $(element).cytoscape(value);
+    var valueUnwrapped = ko.utils.unwrapObservable(value);
+    if (valueUnwrapped) {
+      $(element).cytoscape(valueUnwrapped);
+    }
   }
-}
+};
+
 
 var RoomDetailVM = function(room_id, as_user) {
     var self = this;
     self.currentRoom = ko.observable();
     self.users = ko.observableArray();
     self.visualizationOptions = ko.observable();
+
+    var visualizationOptions = {
+      minZoom: 1,
+      maxZoom: 1,
+      style: cytoscape.stylesheet()
+        .selector('node')
+          .css({
+            'content': 'data(name)',
+            'text-valign': 'center',
+            'color': 'white',
+            'text-outline-width': 2,
+            'text-outline-color': '#888',
+            'shape': 'rectangle',
+            'height': 48,
+            'width': 48,
+            'font-size': 22,
+            'font-family': 'Source Sans Pro, sans-serif',
+            'font-weight': 'bold'
+
+          })
+        .selector('edge')
+          .css({
+            'target-arrow-shape': 'triangle'
+          })
+        .selector(':selected')
+          .css({
+            'background-color': 'black',
+            'line-color': 'black',
+            'target-arrow-color': 'black',
+            'source-arrow-color': 'black'
+          })
+        .selector('.faded')
+          .css({
+            'opacity': 0.25,
+            'text-opacity': 0
+          }),
+      ready: function(){
+        window.cy = this;
+        console.log("Cyto");
+
+        // giddy up...
+
+        cy.elements().unselectify();
+
+        cy.on('tap', 'node', function(e){
+          var node = e.cyTarget;
+          var neighborhood = node.neighborhood().add(node);
+
+          cy.elements().addClass('faded');
+          neighborhood.removeClass('faded');
+        });
+
+        cy.on('tap', function(e){
+          if( e.cyTarget === cy ){
+            cy.elements().removeClass('faded');
+          }
+        });
+      }
+    };
 
     $.get('/api/room/'+room_id+'/', {'user': as_user})
     .then(function(response) {
@@ -118,87 +179,65 @@ var RoomDetailVM = function(room_id, as_user) {
                 return new UserModel(user_data);
             })
         );
-        console.log('loaded');
+        // visualizationOptions.elements = {
+        //     nodes: [
+        //       { data: { id: 'j', name: 'PB' } },
+        //       { data: { id: 'e', name: 'MV' } },
+        //       { data: { id: 'k', name: 'DR' } },
+        //       { data: { id: 'g', name: 'MV' } }
+        //     ],
+        //     edges: [
+        //       { data: { source: 'j', target: 'e' } },
+        //       { data: { source: 'j', target: 'k' } },
+        //       { data: { source: 'j', target: 'g' } },
+        //       { data: { source: 'e', target: 'j' } },
+        //       { data: { source: 'e', target: 'k' } },
+        //       { data: { source: 'k', target: 'j' } },
+        //       { data: { source: 'k', target: 'e' } },
+        //       { data: { source: 'k', target: 'g' } },
+        //       { data: { source: 'g', target: 'j' } }
+        //     ]
+        // };
+        visualizationOptions.elements = {nodes: [], edges: []};
 
-        self.visualizationOptions({
-          minZoom: 1,
-          maxZoom: 1,
-          style: cytoscape.stylesheet()
-            .selector('node')
-              .css({
-                'content': 'data(name)',
-                'text-valign': 'center',
-                'color': 'white',
-                'text-outline-width': 2,
-                'text-outline-color': '#888',
-                'shape': 'rectangle',
-                'height': 48,
-                'width': 48,
-                'font-size': 22,
-                'font-family': 'Source Sans Pro, sans-serif',
-                'font-weight': 'bold'
-
-              })
-            .selector('edge')
-              .css({
-                'target-arrow-shape': 'triangle'
-              })
-            .selector(':selected')
-              .css({
-                'background-color': 'black',
-                'line-color': 'black',
-                'target-arrow-color': 'black',
-                'source-arrow-color': 'black'
-              })
-            .selector('.faded')
-              .css({
-                'opacity': 0.25,
-                'text-opacity': 0
-              }),
-          
-          elements: {
-            nodes: [
-              { data: { id: 'j', name: 'PB' } },
-              { data: { id: 'e', name: 'MV' } },
-              { data: { id: 'k', name: 'DR' } },
-              { data: { id: 'g', name: 'MV' } }
-            ],
-            edges: [
-              { data: { source: 'j', target: 'e' } },
-              { data: { source: 'j', target: 'k' } },
-              { data: { source: 'j', target: 'g' } },
-              { data: { source: 'e', target: 'j' } },
-              { data: { source: 'e', target: 'k' } },
-              { data: { source: 'k', target: 'j' } },
-              { data: { source: 'k', target: 'e' } },
-              { data: { source: 'k', target: 'g' } },
-              { data: { source: 'g', target: 'j' } }
-            ]
-          },
-          
-          ready: function(){
-            window.cy = this;
-            console.log("Cyto");
-            
-            // giddy up...
-            
-            cy.elements().unselectify();
-            
-            cy.on('tap', 'node', function(e){
-              var node = e.cyTarget; 
-              var neighborhood = node.neighborhood().add(node);
-              
-              cy.elements().addClass('faded');
-              neighborhood.removeClass('faded');
+        var all_tags = {};
+        var edges = [];
+        ko.utils.arrayForEach(self.users(), function(user) {
+            console.log(user.id(), user.name(), user.tags())
+            visualizationOptions.elements.nodes.push(
+                {data: {id: user.id(), name: user.name()}});
+            ko.utils.arrayForEach(user.tags(), function(tag) {
+                if (!all_tags[tag]) {
+                    all_tags[tag] = [user.id()];
+                } else {
+                    all_tags[tag].push(user.id());
+                }
             });
-            
-            cy.on('tap', function(e){
-              if( e.cyTarget === cy ){
-                cy.elements().removeClass('faded');
-              }
-            });
-          }
         });
+        for (var tag in all_tags) {
+            var list_of_users_with_tag = all_tags[tag];
+            var edges_for_tag_per_user = {};
+            ko.utils.arrayForEach(list_of_users_with_tag, function(user_id) {
+                if (!edges_for_tag_per_user[user_id]) {
+                    // make a copy
+                    var arr_without_myself = list_of_users_with_tag.slice();
+                    arr_without_myself.splice(arr_without_myself.indexOf(user_id));
+                    if (arr_without_myself) {
+                        edges_for_tag_per_user[user_id] = arr_without_myself;
+                    }
+                }
+            });
+
+            for (var user_id in edges_for_tag_per_user) {
+                var relation_partners = edges_for_tag_per_user[user_id];
+                ko.utils.arrayForEach(relation_partners, function(relation_partner) {
+                    visualizationOptions.elements.edges.push(
+                        {data: {source: user_id, target: relation_partner}});
+                });
+            }
+        }
+
+        self.visualizationOptions(visualizationOptions);
     });
 };
 

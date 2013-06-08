@@ -20,17 +20,28 @@ def room_list_view(request):
         'rooms': [get_json_room(room) for room in Room.objects.all()]
     })
 
+
 def get_json_room(room):
     return {'id': room.id, 'name': room.name}
 
 
 def room_detail_view(request, pk):
+    user = request.GET.get('user', None)
+    if not user:
+        return HttpResponse(content="Missing: user", status=400)
     room = Room.objects.get(pk=pk)
-    users = [get_json_user(user) for user in room.user_set.all()]
+    users = [get_json_user(u, as_user=user) for u in room.user_set.all()]
     return get_json_response({'room': get_json_room(room), 'users': users})
 
 
-def get_json_user(user):
+def get_json_user(user, as_user=None):
+    if as_user:
+        return {
+            'id': user.id,
+            'name': user.name,
+            'tags': [t.label for t in user.tags.all()],
+            'myself': True
+        }
     return {
         'id': user.id,
         'name': user.name,
@@ -56,7 +67,7 @@ def login_view(request, room_id):
     room = Room.objects.get(id=room_id)
 
     u, created = User.objects.get_or_create(name=user, room=room)
-    return get_json_response({'ok': true})
+    return get_json_response({'ok': True})
 
 
 def room_create_event_view(request, room_id):
