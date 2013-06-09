@@ -49,25 +49,31 @@ def room_detail_view(request, room_id):
 
 
 def login_view(request, room_id):
-    user = request.POST.get('user', None)
-    if not user: return HttpResponse(content="Missing: user", status=400)
-    u, created = User.objects.get_or_create(name=user, room_id=room_id)
+    user_name = request.POST.get('user', None)
+    if not user_name: return HttpResponse(content="Missing: user", status=400)
+    room = Room.objects.get(id=room_id)
+    try:
+        u = User.objects.get(name=user_name, room=room)
+    except User.DoesNotExist:
+        u = User.objects.create(name=user_name, room=room)
+        create_event(room, user_name=user_name)
+    print "login_view", u
     return get_json_response({'ok': True})
 
 
 def user_detail_view(request, room_id, user_id):
     return get_json_response({
-        'user': get_json_user(User.objects.get(id=user_id, room_id=room_id)),
+        'user': get_json_user(User.objects.get(id=user_id, room__id=room_id)),
         'latestEventId': Event.objects.latest().id
     })
 
 
 def room_create_event_view(request, room_id, user_id):
-    user = request.POST.get('user', None)
-    if not user: return HttpResponse(content="Missing: user", status=400)
+    user_name = request.POST.get('user', None)
+    if not user_name: return HttpResponse(content="Missing: user", status=400)
     room = Room.objects.get(id=room_id)
     tag = request.POST.get('tag', None)
-    event = create_event(room, user_name=user, tag_label=tag, timestamp=None)
+    event = create_event(room, user_name=user_name, tag_label=tag, timestamp=None)
     return get_json_response(get_json_event(event))
 
 
