@@ -1,6 +1,6 @@
 from os.path import dirname, join, abspath
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -24,20 +24,16 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-MEDIA_ROOT = ''
-MEDIA_URL = ''
+MEDIA_ROOT = join(PROJECT_DIR, '..', 'media')
+MEDIA_URL = '/media/'
 STATIC_ROOT = join(PROJECT_DIR, '..', 'static')
 STATIC_URL = '/static/'
-ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
-
-STATICFILES_DIRS = (
-    join(PROJECT_DIR, 'static'),
-)
+STATICFILES_DIRS = (join(PROJECT_DIR, 'static'),)
 
 SECRET_KEY = 'x#9vlz4k1c4bh9ycy=6=bfze!8m&amp;)(^tpngqvfx_77z!_n=d-6'
 
@@ -47,11 +43,11 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
 )
 
 ROOT_URLCONF = 'hackathon2013.urls'
@@ -65,14 +61,12 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
+    # 'django.contrib.auth',
+    # 'django.contrib.contenttypes',
+    # 'django.contrib.sessions',
+    # 'django.contrib.sites',
+    # 'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'rest_framework',
     'hackathon2013.gravity',
 )
 
@@ -85,17 +79,34 @@ LOGGING = {
         }
     },
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
+        # 'mail_admins': {
+        #     'level': 'ERROR',
+        #     'filters': ['require_debug_false'],
+        #     'class': 'django.utils.log.AdminEmailHandler'
+        # },
+        'print': {
+            'level': 'DEBUG',
             'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
+        '': {
+            'handlers': ['print'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['print'],
             'level': 'ERROR',
             'propagate': True,
         },
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ALLOWED_HOSTS = [
+    'localhost:8000',
+    'frozen-champer-7393.herokuapp.com'
+]
