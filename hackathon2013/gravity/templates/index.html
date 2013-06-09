@@ -30,30 +30,30 @@
     </div>
 
 <script id="RoomListTemplate" type="text/html">
-    <div class="container">
-        <h1>Gravitee</h1>
+<div class="navigation" style="margin-left: auto; margin-right: auto">
+  <div class="container">
+    <h1>Gravitee</h1>
 
-      <div class="navigation">
-        <h2>Location</h2>
+    <h2>Location</h2>
 
-        <ul class="roomlist unstyled" data-bind="foreach: rooms">
-          <li class="room" data-bind="css: {selected: $parent.selectedGroup() && $parent.selectedGroup() === $data}, click: $parent.selectGroup, text: name"></li>
-        </ul>
+    <ul class="roomlist unstyled" data-bind="foreach: rooms">
+      <li class="room" data-bind="css: {selected: $parent.selectedGroup() && $parent.selectedGroup() === $data}, click: $parent.selectGroup, text: name"></li>
+    </ul>
 
-        <h2>Dein Name</h2>
+    <h2>Dein Name</h2>
 
-        <!-- ko if: errors().length -->
-        <ul class="unstyled" data-bind="foreach: errors">
-          <li data-bind="text: $data"></li>
-        </ul>
-        <!-- /ko -->
+    <!-- ko if: errors().length -->
+    <ul class="unstyled" data-bind="foreach: errors">
+      <li data-bind="text: $data"></li>
+    </ul>
+    <!-- /ko -->
 
-        <form class="form-search">
-            <input type="text" data-bind="value: loginName" placeholder="Name" />
-            <button type="submit" class="btn" data-bind="click: goToRoom">LOS!</button>
-        </form>
-      </div>
-    </div>
+    <form class="form-search">
+        <input type="text" data-bind="value: loginName" placeholder="Name" />
+        <button type="submit" class="btn" data-bind="click: goToRoom"><i class="icon-ok"></i> Los</button>
+    </form>
+  </div>
+</div>
 </script>
 
 <script type="text/html" id="RoomDetailTemplate">
