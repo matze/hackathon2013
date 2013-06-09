@@ -190,8 +190,13 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
     self.users = ko.observableArray();
     self.hl_tag = hl_tag;
 
+    self.all_tags = ko.observable();
+    self.weights= ko.observable();
+
     /* export, so that GWT can read it :-) */
     users = self.users;
+    
+
 
     self.visualizationOptions = ko.observable();
     self.loading = ko.observable();
@@ -345,6 +350,24 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                     {
                         node = cy.$("node#"+evt.user.id);
                         highlight(node);
+
+                        console.log( self.all_tags() ) 
+
+                        // already has the tag? Then do nothing ...
+                        if( self.all_tags()[evt.tag].indexOf(evt.user.id) == -1 )
+                        {
+                            // add new edges
+                            connected_users = self.all_tags()[evt.tag]
+                            console.log("need to connect with", connected_users)
+                            
+                            var connect = function( index, id )
+                            {
+                                new_edge = cy.add({group: 'edges', data: {source: String(evt.user.id), weight: '1', target: String(id)}});
+                            };
+
+                            $.each( connected_users, connect );
+
+                        }
                     }
 
                     else if (has_position )
@@ -369,6 +392,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                         }
                         new_node = cy.add(props);
                         highlight(new_node);
+                        
                     }
 
                         self.latestEventId(evt.id);
@@ -393,7 +417,8 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         visuOptions.elements = {nodes: [], edges: []};
 
         /* all_tags: tag -> {users with this tag} */
-        var all_tags = {};
+        var weights = {}
+        var all_tags = {}
         var edges = [];
         console.log("user " + as_user);
         ko.utils.arrayForEach(self.users(), function(user) {
@@ -416,6 +441,8 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                 }
             });
         });
+        
+        self.all_tags(all_tags)
 
         /* users_with_related_users: user -> [ user, [tags] ] */
         var users_with_related_users = {};
