@@ -68,6 +68,15 @@ def user_detail_view(request, room_id, user_id):
     })
 
 
+def user_move_view(request, room_id, user_id):
+    room = Room.objects.get(id=room_id)
+    try:
+        u = User.objects.get(id=user_id, room=room)
+        u.update(x=request.POST.get('x'), y=request.POST.get('y'))
+    except User.DoesNotExist:
+        print "Impossible but okay..."
+
+
 def room_create_event_view(request, room_id, user_id):
     user_name = request.POST.get('user', None)
     if not user_name: return HttpResponse(content="Missing: user", status=400)

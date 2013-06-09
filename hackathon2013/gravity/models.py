@@ -14,12 +14,16 @@ class User(models.Model):
     name = models.CharField(max_length=200)
     tags = models.ManyToManyField(Tag)
     room = models.ForeignKey(Room)
+    x = models.FloatField(default=0.0)
+    y = models.FloatField(default=0.0)
 
 
 class Event(models.Model):
     user = models.ForeignKey(User, related_name='ratings')
     tag = models.ForeignKey(Tag, related_name='ratings', null=True, blank=True)
     timestamp = models.DateTimeField(default=timezone.now)
+    x = models.FloatField(default=0.0)
+    y = models.FloatField(default=0.0)
 
     class Meta:
         get_latest_by = ('id',)

@@ -5,6 +5,7 @@ from hackathon2013.gravity.views import (
     room_list_view,
     user_detail_view,
     user_add_tag_view,
+    user_move_view,
     login_view
 )
 
@@ -22,6 +23,7 @@ urlpatterns = patterns(
 
     url(r'^/room/(?P<room_id>\d+)/login/$', csrf_exempt(login_view)),
     url(r'^/room/(?P<room_id>\d+)/user/(?P<user_id>\d+)/tag/$', csrf_exempt(user_add_tag_view)),
+    url(r'^/room/(?P<room_id>\d+)/user/(?P<user_id>\d+)/move/$', csrf_exempt(user_move_view)),
     url(r'^/room/(?P<room_id>\d+)/user/(?P<user_id>\d+)/$', csrf_exempt(user_detail_view)),
     url(r'^/room/(?P<room_id>\d+)/$', csrf_exempt(room_detail_view)),
     url(r'^/room/$', csrf_exempt(room_list_view)),
