@@ -2,7 +2,7 @@ from functools import wraps
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 from rest_framework import generics, serializers
-from hackathon2013.gravity.models import Tag, User, Room, create_event
+from hackathon2013.gravity.models import Tag, User, Room, create_event, Event
 import json
 
 
@@ -30,15 +30,12 @@ def get_json_user(user, as_user=None):
 
 def get_json_event(event):
     ret = {'id': event.id, 'user': get_json_user(event.user)}
-    if event.tag_id: ret['tag'] = event.tag.label,
+    if event.tag_id: ret['tag'] = event.tag.label
     return ret
 
 
 def room_list_view(request):
     return get_json_response({'rooms': [get_json_room(room) for room in Room.objects.all()]})
-
-def room_history_view(request, room_id, event_id):
-    pass
 
 
 def room_detail_view(request, room_id):
@@ -47,7 +44,10 @@ def room_detail_view(request, room_id):
     room = Room.objects.get(id=room_id)
     user = User.objects.get(name=user_name, room=room)
     users = [get_json_user(u, as_user=user) for u in room.user_set.all()]
-    return get_json_response({'room': get_json_room(room), 'users': users})
+    return get_json_response({
+        'room': get_json_room(room), 'users': users,
+        'latestEventId': Event.objects.latest().id
+    })
 
 
 def login_view(request, room_id):
@@ -59,7 +59,8 @@ def login_view(request, room_id):
 
 def user_detail_view(request, room_id, user_id):
     return get_json_response({
-        'user': get_json_user(User.objects.get(id=user_id, room_id=room_id))
+        'user': get_json_user(User.objects.get(id=user_id, room_id=room_id)),
+        'latestEventId': Event.objects.latest().id
     })
 
 
@@ -81,7 +82,10 @@ def user_add_tag_view(request, room_id, user_id):
     return get_json_response(get_json_event(event))
 
 
-def event_list_view(request, last_known_event):
+def event_list_view(request, room_id, last_known_event):
     return get_json_response({
-        'events': [get_json_event(event) for event in Event.objects.filter(id__gt=last_known_event)]
+        'events': [
+            get_json_event(event)
+            for event in Event.objects.filter(user__room__id=room_id, id__gt=last_known_event)
+        ]
     })

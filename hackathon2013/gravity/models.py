@@ -21,6 +21,9 @@ class Event(models.Model):
     tag = models.ForeignKey(Tag, related_name='ratings', null=True, blank=True)
     timestamp = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        get_latest_by = ('id',)
+
 
 def create_event(room, user_name, tag_label=None, timestamp=None):
     if not timestamp:
