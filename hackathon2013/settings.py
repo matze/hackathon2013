@@ -110,3 +110,5 @@ ALLOWED_HOSTS = [
     'localhost:8000',
     'frozen-champer-7393.herokuapp.com'
 ]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

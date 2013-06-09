@@ -3,6 +3,7 @@
 var sammy_app = null;
 var newEventsCallback = null;
 
+var update_interval = 2000;
 
 var bnd = function(model, template) {
     var element = document.getElementById('page');
@@ -139,7 +140,7 @@ var UserDetailVM = function(room_id, user_id, as_user) {
             });
         }
     };
-    setInterval(self.update, 300);
+    setInterval(self.update, update_interval);
 
 
     $.get('/api/room/'+room_id+'/user/'+user_id+'/', {'user': as_user})
@@ -162,6 +163,18 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
     self.visualizationOptions = ko.observable();
     self.loading = ko.observable();
+
+    self.do_hl_tag = function(hl_tag) {
+        if (hl_tag === undefined) {
+            hl_tag = self.hl_tag;
+        }
+        if (hl_tag) {
+            var all_with_class = cy.$('.'+hl_tag);
+            var reset_color = function() { this.delay(1000).animate({css: {'background-color': this.data().color}}); };
+
+            all_with_class.animate({ css: {'background-color' : '#d9cb9e'}}, {duration: 500, complete: reset_color });
+        }
+    };
 
     var visuOptions = {
       minZoom: 1,
@@ -232,13 +245,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         });
 
         cy.on('cxttap', function(e){
-
-            hl_tag = self.hl_tag
-
-            var all_with_class = cy.$('.'+hl_tag);
-            var reset_color = function() { this.delay(1000).animate({css: {'background-color': this.data().color}}); };
-
-            all_with_class.animate({ css: {'background-color' : '#d9cb9e'}}, {duration: 500, complete: reset_color });
+            self.do_hl_tag()
         });
 
         cy.on('tap', function(e){
@@ -313,7 +320,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
             }
         }
     };
-    setInterval(self.update, 300);
+    setInterval(self.update, update_interval);
 
     $.get('/api/room/'+room_id+'/', {'user': as_user})
     .then(function(response) {
@@ -416,6 +423,12 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         }
 
         self.visualizationOptions(visuOptions);
+
+        if (self.hl_tag) {
+            setTimeout(function() {
+                self.do_hl_tag();
+            }, 200);
+        }
 
         self.loading(false);
         // newEventsCallback(groupDetailEventCb.bind(self));
