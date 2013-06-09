@@ -202,7 +202,9 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         }
         if (hl_tag) {
             var all_with_class = cy.$('.'+hl_tag);
-            var reset_color = function() { this.delay(1000).animate({css: {'background-color': this.data().color}}); };
+            var reset_color = function() {
+              this.delay(1000).animate({css: {'background-color': this.data().bgcolor}});
+            };
 
             all_with_class.animate({ css: {'background-color' : '#d9cb9e'}}, {duration: 500, complete: reset_color });
         }
