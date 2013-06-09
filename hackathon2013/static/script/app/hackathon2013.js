@@ -93,8 +93,10 @@ var RoomListVM = function() {
         $.post('/api/room/'+sel_gr.id()+'/login/', {'user': login_name})
         .then(function(resp) {
             // console.log("Login and user created", resp);
+            setTimeout(function() {
+                sammy_app.setLocation('/room/'+sel_gr.id()+'?user='+login_name);
+            }, 500);
         });
-        sammy_app.setLocation('/room/'+sel_gr.id()+'?user='+login_name);
     };
 
 
