@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
 from django.http import HttpResponse
-from hackathon2013.gravity.models import Tag, User, Room, create_event, Event
+from gravity.models import Tag, User, Room, create_event, Event
 import json
 
 

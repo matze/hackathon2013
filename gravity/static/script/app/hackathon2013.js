@@ -258,7 +258,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         // giddy up...
 
         cy.elements().unselectify();
-        
+
         cy.on('free', function(e){
             var node = e.cyTarget;
             console.log( node.data().id );
@@ -347,7 +347,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
                     else if (has_position )
                     {
-                       console.log("got MOVE event for user", evt.user.id); 
+                       console.log("got MOVE event for user", evt.user.id);
                     }
 
                     else
@@ -420,26 +420,26 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         for (var tag in all_tags) {
             var list_of_users_with_tag = all_tags[tag];
             ko.utils.arrayForEach(list_of_users_with_tag, function(user_id) {
-            	// make a copy
+                // make a copy
                 var arr_without_myself = list_of_users_with_tag.slice();
                 arr_without_myself.splice(arr_without_myself.indexOf(user_id));
                 if (arr_without_myself) {
-                	// if there are more than 1 with the tag
+                    // if there are more than 1 with the tag
                     ko.utils.arrayForEach(arr_without_myself, function(related_user_id) {
-                		var related_users = users_with_related_users[user_id];
-                    	if(!related_users) {
-                    		related_users = [];
-                    		related_users[ related_user_id ] = [ tag ];
-                    		users_with_related_users[user_id] = related_users;
-                    	} else {
-                    		var tags = related_users[related_user_id];
-                    		if(!tags) {
-                    			related_users[related_user_id] = [tag];
-                    		} else {
-                    			tags.push(tag);
-                    		}
-                    	}
-                	});
+                        var related_users = users_with_related_users[user_id];
+                        if(!related_users) {
+                            related_users = [];
+                            related_users[ related_user_id ] = [ tag ];
+                            users_with_related_users[user_id] = related_users;
+                        } else {
+                            var tags = related_users[related_user_id];
+                            if(!tags) {
+                                related_users[related_user_id] = [tag];
+                            } else {
+                                tags.push(tag);
+                            }
+                        }
+                    });
                 }
             });
 
@@ -448,22 +448,22 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
         /* create final edges */
         for (var user_id in users_with_related_users) {
-        	var related_users = users_with_related_users[user_id];
-        	if(related_users) {
-        		for(var related_user_id in related_users) {
+            var related_users = users_with_related_users[user_id];
+            if(related_users) {
+                for(var related_user_id in related_users) {
 
-        				var related_tags = related_users[related_user_id];
-        				var edgeCount = related_tags.length;
-        				// console.log("edge",user_id, edgeCount, related_user_id);
-        				visuOptions.elements.edges.push(
-        						{'data': {
-        							'source':  String(user_id),
-        							'target':  String(related_user_id),
-        							'weight': String(edgeCount)
-        						}});
+                        var related_tags = related_users[related_user_id];
+                        var edgeCount = related_tags.length;
+                        // console.log("edge",user_id, edgeCount, related_user_id);
+                        visuOptions.elements.edges.push(
+                                {'data': {
+                                    'source':  String(user_id),
+                                    'target':  String(related_user_id),
+                                    'weight': String(edgeCount)
+                                }});
 
-        		}
-        	}
+                }
+            }
         }
 
         self.visualizationOptions(visuOptions);
