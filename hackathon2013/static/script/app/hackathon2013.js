@@ -258,6 +258,15 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         // giddy up...
 
         cy.elements().unselectify();
+        
+        cy.on('free', function(e){
+            var node = e.cyTarget;
+            console.log( node.data().id );
+            console.log("moved node to", node.position());
+
+            $.post("/api/room/"+room_id+"/user/"+node.data().id+"/move/", {x: node.position().x, y: node.position().y})
+            .then( function( response ){});
+        });
 
         cy.on('tap', 'node', function(e){
           var node = e.cyTarget;
@@ -302,6 +311,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
                         var user_id = evt.user.id;
                         var has_tag = evt.tag !== undefined;
+                        var has_position = evt.x != undefined && evt.y != undefined;
                         var _user = new UserModel(evt.user);
 
 
@@ -333,6 +343,11 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                     {
                         node = cy.$("node#"+evt.user.id);
                         highlight(node);
+                    }
+
+                    else if (has_position )
+                    {
+                       console.log("got MOVE event for user", evt.user.id); 
                     }
 
                     else

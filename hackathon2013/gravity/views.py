@@ -76,9 +76,16 @@ def user_move_view(request, room_id, user_id):
     room = Room.objects.get(id=room_id)
     try:
         u = User.objects.get(id=user_id, room=room)
-        u.update(x=request.POST.get('x'), y=request.POST.get('y'))
+        u.x = request.POST.get('x')
+        u.y = request.POST.get('y')
+
+        u.save()
+
     except User.DoesNotExist:
-        print "Impossible but okay..."
+        pass
+
+
+    return get_json_response({})
 
 
 def room_create_event_view(request, room_id, user_id):

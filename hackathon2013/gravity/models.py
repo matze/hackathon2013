@@ -29,7 +29,7 @@ class Event(models.Model):
         get_latest_by = ('id',)
 
 
-def create_event(room, user_name, tag_label=None, timestamp=None):
+def create_event(room, user_name, tag_label=None, timestamp=None, x=0.0, y=0.0):
     if not timestamp:
         timestamp = timezone.now()
     kw = {'timestamp': timestamp}
