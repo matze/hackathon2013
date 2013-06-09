@@ -122,40 +122,35 @@
     <!-- /ko -->
 
       <div>
-        <form>
-          <input style="width: 250px;" data-bind="value: newTag" placeholder="Tag" />
+        <input style="width: 220px;" data-bind="value: newTag" placeholder="Tag" />
 
-          <!-- ko if: showExistingTags -->
-          <button style="float: right;" data-bind="click: showExistingTags.bind({}, false)">Verbergen</button>
-          <!-- /ko -->
-          <!-- ko ifnot: showExistingTags -->
-          <button style="float: right;" data-bind="click: showExistingTags.bind({}, true)">Weitere anzeigen</button>
-          <!-- /ko -->
+        <!-- ko if: showExistingTags -->
+        <button style="float: right;" data-bind="click: showExistingTags.bind({}, false)">Verbergen</button>
+        <!-- /ko -->
+        <!-- ko ifnot: showExistingTags -->
+        <button style="float: right;" data-bind="click: showExistingTags.bind({}, true)">Beliebte</button>
+        <!-- /ko -->
 
-          <div style="overflow:hidden;">
-            <button data-bind="click: addNewTag"><i class="icon-tag"></i> </button>
-          </div>
-
-
-        </form>
-
-
-  <!-- ko if: showExistingTags -->
-  <div class="clearfix">
-  <ul class="tags-holder" data-bind="foreach: tagsInRoomNotSet">
-      <li>
         <div style="overflow:hidden;">
-        <button data-bind="click: $parent.addExistingTag">
-            <span class="text">
-                <span data-bind="text: $data"></span>
-            </span>
-            <span class="arrow">&bullet;</span>
-        </button>
+          <button data-bind="click: addNewTag"><i class="icon-plus"></i> </button>
         </div>
-      </li>
-  </ul>
-  </div>
-  <!-- /ko -->
+
+        <!-- ko if: showExistingTags -->
+        <div class="clearfix">
+        <ul class="tags-holder" data-bind="foreach: tagsInRoomNotSet">
+            <li>
+              <div style="overflow:hidden;">
+              <button data-bind="click: $parent.addExistingTag">
+                  <span class="text">
+                      <span data-bind="text: $data"></span>
+                  </span>
+                  <span class="arrow">&bullet;</span>
+              </button>
+              </div>
+            </li>
+        </ul>
+        </div>
+        <!-- /ko -->
 
     </div>
   </div>
