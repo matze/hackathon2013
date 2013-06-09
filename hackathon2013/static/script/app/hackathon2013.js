@@ -103,8 +103,6 @@ var UserDetailVM = function(room_id, user_id, as_user) {
 
     self.backToRoomUrl = '/room/'+room_id+'?user='+as_user;
 
-    self.latestEventId = ko.observable();
-
     self.newTag = ko.observable();
     self.addNewTag = function(vm, evt) {
         var nTag = self.newTag();
@@ -114,10 +112,11 @@ var UserDetailVM = function(room_id, user_id, as_user) {
         $.post('/api/room/'+room_id+'/user/'+user_id+'/tag/', {'tag': nTag})
         .done(function(response) {
             console.log("tag added", response);
-            self.update();
+            // self.update();
         });
     };
 
+    self.latestEventId = ko.observable();
     self.doingUpdate = ko.observable();
     self.update = function() {
         self.doingUpdate(true);
@@ -129,7 +128,7 @@ var UserDetailVM = function(room_id, user_id, as_user) {
                     console.log("ev", evt);
                     var user = self.currentUser();
                     if (evt.user.id === user.id()) {
-                        console.log(user, user.tags, user.tags())
+                        // console.log(user, user.tags, user.tags());
                         user.tags.push(evt.tag);
                     }
                     self.latestEventId(evt.id);
@@ -138,6 +137,8 @@ var UserDetailVM = function(room_id, user_id, as_user) {
             });
         }
     };
+    setInterval(self.update, 300);
+
 
     $.get('/api/room/'+room_id+'/user/'+user_id+'/', {'user': as_user})
     .then(function(response) {
@@ -145,11 +146,6 @@ var UserDetailVM = function(room_id, user_id, as_user) {
         self.loading(false);
         self.latestEventId(response.latestEventId);
     });
-
-    setInterval(function() {
-        self.update()
-    }, 300);
-
 };
 
 
@@ -248,6 +244,31 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
       }
     };
 
+    self.latestEventId = ko.observable();
+    self.doingUpdate = ko.observable(false);
+    self.update = function() {
+        if (!self.doingUpdate()) {
+            self.doingUpdate(true);
+            var latestEventId = self.latestEventId();
+            if (latestEventId) {
+                $.get('/api/room/'+room_id+'/events/'+latestEventId+'/')
+                .done(function(response) {
+                    ko.utils.arrayForEach(response.events, function(evt) {
+                        console.log("ev", evt);
+                        /*var user = self.currentUser();
+                        if (evt.user.id === user.id()) {
+                            console.log(user, user.tags, user.tags())
+                            user.tags.push(evt.tag);
+                        }*/
+                        self.latestEventId(evt.id);
+                    });
+                    self.doingUpdate(false);
+                });
+            }
+        }
+    };
+    setInterval(self.update, 300);
+
     $.get('/api/room/'+room_id+'/', {'user': as_user})
     .then(function(response) {
         self.currentRoom(new RoomModel(response.room));
@@ -302,13 +323,12 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         for (var tag in all_tags) {
             var list_of_users_with_tag = all_tags[tag];
             ko.utils.arrayForEach(list_of_users_with_tag, function(user_id) {
-
             	// make a copy
                 var arr_without_myself = list_of_users_with_tag.slice();
                 arr_without_myself.splice(arr_without_myself.indexOf(user_id));
                 if (arr_without_myself) {
                 	// if there are more than 1 with the tag
-                	ko.utils.arrayForEach(arr_without_myself, function(related_user_id) {
+                    ko.utils.arrayForEach(arr_without_myself, function(related_user_id) {
                 		var related_users = users_with_related_users[user_id];
                     	if(!related_users) {
                     		related_users = [];
@@ -324,10 +344,10 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                     	}
                 	});
                 }
-
             });
 
-        }
+            self.latestEventId(response.latestEventId);
+        };
 
         /* create final edges */
         for (var user_id in users_with_related_users) {
