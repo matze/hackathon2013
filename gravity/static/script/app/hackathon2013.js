@@ -33,8 +33,8 @@ var UserModel = function(user_data) {
   this.id = ko.observable(user_data.id);
   this.name = ko.observable(user_data.name);
   this.tags = ko.observableArray(user_data.tags);
-  this.x = ko.observableArray(user_data.x);
-  this.y = ko.observableArray(user_data.y);
+  this.x = ko.observable(user_data.x);
+  this.y = ko.observable(user_data.y);
   this.myself = user_data.myself || false;
 };
 
