@@ -379,6 +379,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                     {
                         // TODO do we ever reach this line?
                         console.log("need new node");
+                        var bg_color = '#37' + Math.floor((_user.name().charCodeAt(0) + Math.random() * 10) % 255).toString(16) + '40';
 
                         var props = {
                             group: 'nodes',
@@ -386,9 +387,11 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                             'data': {
                                 'id': String(_user.id()),
                                 'name': _user.name(),
-                                'color': '#37' + 'f'
+                                'bgcolor': bg_color,
+                                'fgcolor': '#d9cb9e'
                                  // + color + '40'
-                            }
+                            },
+                            position: {x: 400 + Math.random()*30, y: 300 + Math.random()*30}
                         }
                         new_node = cy.add(props);
                         highlight(new_node);
