@@ -119,15 +119,24 @@
 
       <div>
         <form>
-          <input data-bind="value: newTag" placeholder="Tag" />
+          <input style="width: 250px;" data-bind="value: newTag" placeholder="Tag" />
+
+          <!-- ko if: showExistingTags -->
+          <button style="float: right;" data-bind="click: showExistingTags.bind({}, false)">Verbergen</button>
+          <!-- /ko -->
+          <!-- ko ifnot: showExistingTags -->
+          <button style="float: right;" data-bind="click: showExistingTags.bind({}, true)">Weitere anzeigen</button>
+          <!-- /ko -->
+
           <div style="overflow:hidden;">
             <button data-bind="click: addNewTag"><i class="icon-tag"></i> </button>
           </div>
+
+
         </form>
 
 
   <!-- ko if: showExistingTags -->
-  <button data-bind="click: showExistingTags.bind({}, false)">Hide existing tags</button>
   <div class="clearfix">
   <ul class="tags-holder" data-bind="foreach: tagsInRoomNotSet">
       <li>
@@ -142,9 +151,6 @@
       </li>
   </ul>
   </div>
-  <!-- /ko -->
-  <!-- ko ifnot: showExistingTags -->
-  <button data-bind="click: showExistingTags.bind({}, true)">Show existing tags</button>
   <!-- /ko -->
 
     </div>
