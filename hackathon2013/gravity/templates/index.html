@@ -76,64 +76,72 @@
 
 
 <script type="text/html" id="UserDetailTemplate">
-<div class="container">
-  <h1>Gravitee</h1>
+<div class="navigation" style="margin-left: auto; margin-right: auto">
+  <div class="container">
+    <h1>Gravitee</h1>
 
-  <h2>User
-        <!-- ko if: currentUser() -->
-        <span data-bind="text: currentUser().name"></span>
-        <!-- /ko -->
-  </h2>
+    <h2>User
+          <!-- ko if: currentUser() -->
+          <span data-bind="text: currentUser().name"></span>
+          <!-- /ko -->
+    </h2>
 
-  <p class="go-back"><a data-bind="attr: {href: backToRoomUrl}">
-    <i class="icon-chevron-sign-left"></i> &nbsp;Zurück</a>
-  </p>
+    <p class="go-back"><a data-bind="attr: {href: backToRoomUrl}">
+      <i class="icon-chevron-sign-left"></i> &nbsp;Zurück</a>
+    </p>
 
-  <!-- ko if: currentUser() && currentUser().tags().length -->
-  <ul class="tags-holder" data-bind="foreach: currentUser().tags">
-    <li>
-      <div style="overflow:hidden;">
-      <a data-bind="attr: {href: '/room/'+$parent.room_id+'?hl='+encodeURIComponent($data)+'&user='+$parent.as_user, title: $data}">
-          <span class="text">
-              <span data-bind="text: $data"></span>
-          </span>
-          <span class="arrow">&bullet;</span>
-      </a>
-      </div>
-    </li>
-  </ul>
-  <!-- /ko -->
+    <h3>Details</h3>
+    <ul class="detail-list"">
+      <li>Twitter: <a href="http://twitter.com/foo">@foo</a></li>
+      <li>Web: <a href="http://nerd-zone.com">nerd-zone.com</a></li>
+    </ul>
 
-  <div class="navigation">
-    <div>
-      <form>
-        <input data-bind="value: newTag" placeholder="Tag" />
+    <h3>Tags</h3>
+
+    <!-- ko if: currentUser() && currentUser().tags().length -->
+    <ul class="tags-holder" data-bind="foreach: currentUser().tags">
+      <li>
         <div style="overflow:hidden;">
-          <button data-bind="click: addNewTag"><i class="icon-tag"></i> </button>
+        <a data-bind="attr: {href: '/room/'+$parent.room_id+'?hl='+encodeURIComponent($data)+'&user='+$parent.as_user, title: $data}">
+            <span class="text">
+                <span data-bind="text: $data"></span>
+            </span>
+            <span class="arrow">&bullet;</span>
+        </a>
         </div>
-      </form>
+      </li>
+    </ul>
+    <!-- /ko -->
+
+      <div>
+        <form>
+          <input data-bind="value: newTag" placeholder="Tag" />
+          <div style="overflow:hidden;">
+            <button data-bind="click: addNewTag"><i class="icon-tag"></i> </button>
+          </div>
+        </form>
 
 
-<!-- ko if: showExistingTags -->
-<button data-bind="click: showExistingTags.bind({}, false)">Hide existing tags</button>
-<div class="clearfix">
-<ul class="tags-holder" data-bind="foreach: tagsInRoomNotSet">
-    <li>
-      <div style="overflow:hidden;">
-      <button data-bind="click: $parent.addExistingTag">
-          <span class="text">
-              <span data-bind="text: $data"></span>
-          </span>
-          <span class="arrow">&bullet;</span>
-      </button>
-      </div>
-    </li>
-</ul>
-</div>
-<!-- /ko -->
-<!-- ko ifnot: showExistingTags -->
-<button data-bind="click: showExistingTags.bind({}, true)">Show existing tags</button>
-<!-- /ko -->
+  <!-- ko if: showExistingTags -->
+  <button data-bind="click: showExistingTags.bind({}, false)">Hide existing tags</button>
+  <div class="clearfix">
+  <ul class="tags-holder" data-bind="foreach: tagsInRoomNotSet">
+      <li>
+        <div style="overflow:hidden;">
+        <button data-bind="click: $parent.addExistingTag">
+            <span class="text">
+                <span data-bind="text: $data"></span>
+            </span>
+            <span class="arrow">&bullet;</span>
+        </button>
+        </div>
+      </li>
+  </ul>
+  </div>
+  <!-- /ko -->
+  <!-- ko ifnot: showExistingTags -->
+  <button data-bind="click: showExistingTags.bind({}, true)">Show existing tags</button>
+  <!-- /ko -->
 
     </div>
   </div>
