@@ -22,7 +22,9 @@ def get_json_user(user, as_user=None):
         'id': user.id,
         'name': user.name,
         'tags': [t.label for t in user.tags.all()],
-        'myself': True if as_user and as_user.id == user.id else False
+        'myself': True if as_user and as_user.id == user.id else False,
+        'x': user.x,
+        'y': user.y
     }
 
 
