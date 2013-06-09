@@ -78,6 +78,10 @@ var RoomListVM = function() {
         if (!(login_name && login_name.trim())) {
           self.errors.push("Bitte gib einen Namen ein um dich einzuloggen");
         }
+        if(!/^[a-zA-Z0-9 _]+$/.test(login_name)) {
+          var valid_chars = "a-zA-Z0-9 _";
+          self.errors.push('Bitte wähle einen Namen der nur "'+valid_chars+'" enthält')
+        }
         if (!sel_gr) {
           self.errors.push("Bitte wähle eine Gruppe aus");
         }
