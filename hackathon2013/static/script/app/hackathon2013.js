@@ -108,6 +108,19 @@ var UserDetailVM = function(room_id, user_id, as_user) {
     self.currentUser = ko.observable();
     self.loading = ko.observable(false);
 
+    var all_tags_in_group = ko.observable();
+    self.tagsInRoomNotSet = ko.computed(function() {
+        if (!self.currentUser()) {
+            return [];
+        }
+        var user_tags = self.currentUser().tags();
+        return ko.utils.arrayFilter(all_tags_in_group(), function(tag) {
+            if (user_tags.indexOf(tag) === -1) {
+                return true;
+            }
+        });
+    });
+
     self.backToRoomUrl = '/room/'+room_id+'?user='+as_user;
     self.room_id = room_id;
     self.as_user = as_user;
@@ -118,6 +131,7 @@ var UserDetailVM = function(room_id, user_id, as_user) {
         if (!nTag) {
             return;
         }
+        self.newTag('');
         $.post('/api/room/'+room_id+'/user/'+user_id+'/tag/', {'tag': nTag})
         .done(function(response) {
             console.log("tag added", response);
@@ -150,10 +164,20 @@ var UserDetailVM = function(room_id, user_id, as_user) {
     };
     setInterval(self.update, update_interval);
 
+    self.showExistingTags = ko.observable();
+    self.addExistingTag = function(existingTag) {
+        $.post('/api/room/'+room_id+'/user/'+user_id+'/tag/', {'tag': existingTag})
+        .done(function(response) {
+            console.log("tag added", response);
+            // self.update();
+        });
+    }
 
     $.get('/api/room/'+room_id+'/user/'+user_id+'/', {'user': as_user})
     .then(function(response) {
         self.currentUser(new UserModel(response.user));
+        all_tags_in_group(response.all_tags_in_group);
+
         self.loading(false);
         self.latestEventId(response.latestEventId);
     });

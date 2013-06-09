@@ -64,7 +64,11 @@ def login_view(request, room_id):
 def user_detail_view(request, room_id, user_id):
     return get_json_response({
         'user': get_json_user(User.objects.get(id=user_id, room__id=room_id)),
-        'latestEventId': Event.objects.latest().id
+        'latestEventId': Event.objects.latest().id,
+        'all_tags_in_group': [
+            tag.label for tag in
+            Tag.objects.filter(user__room__id=room_id).distinct()
+        ]
     })
 
 

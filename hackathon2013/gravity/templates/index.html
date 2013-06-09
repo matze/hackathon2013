@@ -114,6 +114,29 @@
           <button data-bind="click: addNewTag"><i class="icon-tag"></i> </button>
         </div>
       </form>
+
+
+<!-- ko if: showExistingTags -->
+<button data-bind="click: showExistingTags.bind({}, false)">Hide existing tags</button>
+<div class="clearfix">
+<ul class="tags-holder" data-bind="foreach: tagsInRoomNotSet">
+    <li>
+      <div style="overflow:hidden;">
+      <button data-bind="click: $parent.addExistingTag">
+          <span class="text">
+              <span data-bind="text: $data"></span>
+          </span>
+          <span class="arrow">&bullet;</span>
+      </button>
+      </div>
+    </li>
+</ul>
+</div>
+<!-- /ko -->
+<!-- ko ifnot: showExistingTags -->
+<button data-bind="click: showExistingTags.bind({}, true)">Show existing tags</button>
+<!-- /ko -->
+
     </div>
   </div>
 </div>
