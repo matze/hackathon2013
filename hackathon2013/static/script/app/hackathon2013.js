@@ -103,6 +103,8 @@ var UserDetailVM = function(room_id, user_id, as_user) {
 
     self.backToRoomUrl = '/room/'+room_id+'?user='+as_user;
 
+    self.latestEventId = ko.observable();
+
     self.newTag = ko.observable();
     self.addNewTag = function(vm, evt) {
         var nTag = self.newTag();
@@ -112,16 +114,42 @@ var UserDetailVM = function(room_id, user_id, as_user) {
         $.post('/api/room/'+room_id+'/user/'+user_id+'/tag/', {'tag': nTag})
         .done(function(response) {
             console.log("tag added", response);
+            self.update();
         });
-    }
+    };
+
+    self.doingUpdate = ko.observable();
+    self.update = function() {
+        self.doingUpdate(true);
+        var latestEventId = self.latestEventId();
+        if (latestEventId) {
+            $.get('/api/room/'+room_id+'/events/'+latestEventId+'/')
+            .done(function(response) {
+                ko.utils.arrayForEach(response.events, function(evt) {
+                    console.log("ev", evt);
+                    var user = self.currentUser();
+                    if (evt.user.id === user.id()) {
+                        console.log(user, user.tags, user.tags())
+                        user.tags.push(evt.tag);
+                    }
+                    self.latestEventId(evt.id);
+                });
+                self.doingUpdate(false);
+            });
+        }
+    };
 
     $.get('/api/room/'+room_id+'/user/'+user_id+'/', {'user': as_user})
     .then(function(response) {
         self.currentUser(new UserModel(response.user));
         self.loading(false);
-
-        console.log("now update events")
+        self.latestEventId(response.latestEventId);
     });
+
+    setInterval(function() {
+        self.update()
+    }, 300);
+
 };
 
 
@@ -131,8 +159,6 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
     self.users = ko.observableArray();
     self.hl_tag = hl_tag;
 
-    console.log("parameters passed to RoomDetailVM", as_user, hl_tag, self.hl_tag)
-    
     /* export, so that GWT can read it :-) */
     users = self.users;
 
@@ -192,10 +218,10 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
         // TODO
         // durch die Brust in's Knie -- wie geht das schlauer?
-    
+
           var event = jQuery.Event("click");
           event.user_id = user_id;
-          
+
         $('#goToDetailButton').trigger(event)
 
           var neighborhood = node.neighborhood().add(node);
@@ -276,7 +302,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         for (var tag in all_tags) {
             var list_of_users_with_tag = all_tags[tag];
             ko.utils.arrayForEach(list_of_users_with_tag, function(user_id) {
-            	
+
             	// make a copy
                 var arr_without_myself = list_of_users_with_tag.slice();
                 arr_without_myself.splice(arr_without_myself.indexOf(user_id));
@@ -298,17 +324,17 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                     	}
                 	});
                 }
-                
+
             });
-            
+
         }
-        
+
         /* create final edges */
         for (var user_id in users_with_related_users) {
         	var related_users = users_with_related_users[user_id];
         	if(related_users) {
         		for(var related_user_id in related_users) {
-        			
+
         				var related_tags = related_users[related_user_id];
         				var edgeCount = related_tags.length;
         				console.log("edge",user_id, edgeCount, related_user_id);
@@ -318,7 +344,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         							'target':  String(related_user_id),
         							'weight': String(edgeCount)
         						}});
-        			
+
         		}
         	}
         }
@@ -328,7 +354,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         self.loading(false);
         // newEventsCallback(groupDetailEventCb.bind(self));
     });
-    
+
     self.goToDetailView = function(vm, evt) {
         if( !vm )
             return;
