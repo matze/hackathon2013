@@ -216,15 +216,15 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
           .css({
             'content': 'data(name)',
             'text-valign': 'center',
-            'color': '#d9cb9e',
+            'color': 'data(fgcolor)',
             'text-outline-width': 4,
-            'text-outline-color': 'data(color)',
+            'text-outline-color': 'data(bgcolor)',
             'height': 48,
             'width': 48,
             'font-size': 22,
             'font-family': 'Source Sans Pro, sans-serif',
             'font-weight': 'bold',
-            'background-color': 'data(color)' //'#374140'
+            'background-color': 'data(bgcolor)' //'#374140'
           })
 
         .selector('.user').css(
@@ -373,35 +373,23 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
             })
         );
 
-        // visualizationOptions.elements = {
-        //     nodes: [
-        //       { data: { id: 'j', name: 'PB' } },
-        //       { data: { id: 'e', name: 'MV' } },
-        //       { data: { id: 'k', name: 'DR' } },
-        //       { data: { id: 'g', name: 'MV' } }
-        //     ],
-        //     edges: [
-        //       { data: { source: 'j', target: 'e' } },
-        //       { data: { source: 'j', target: 'k' } },
-        //       { data: { source: 'j', target: 'g' } },
-        //       { data: { source: 'e', target: 'j' } },
-        //       { data: { source: 'e', target: 'k' } },
-        //       { data: { source: 'k', target: 'j' } },
-        //       { data: { source: 'k', target: 'e' } },
-        //       { data: { source: 'k', target: 'g' } },
-        //       { data: { source: 'g', target: 'j' } }
-        //     ]
-        // };
-
         visuOptions.elements = {nodes: [], edges: []};
 
         /* all_tags: tag -> {users with this tag} */
         var all_tags = {};
         var edges = [];
+        console.log("user " + as_user);
         ko.utils.arrayForEach(self.users(), function(user) {
-            var color = Math.floor((user.name().charCodeAt(0) + Math.random() * 10) % 255).toString(16);
+            var bg_color = '#37' + Math.floor((user.name().charCodeAt(0) + Math.random() * 10) % 255).toString(16) + '40';
+            var fg_color = '#d9cb9e';
+
+            if (user.name() == as_user) {
+                bg_color = '#8fb247';
+                fg_color = '#333';
+            }
+
             visuOptions.elements.nodes.push(
-                {'classes': 'user  ' + user.tags().join(' '), 'data': {'id': String(user.id()), 'name': user.name(), 'color': '#37' + color + '40'}});
+                {'classes': 'user  ' + user.tags().join(' '), 'data': {'id': String(user.id()), 'name': user.name(), 'fgcolor': fg_color, 'bgcolor': bg_color }});
 
             ko.utils.arrayForEach(user.tags(), function(tag) {
                 if (!all_tags[tag]) {
@@ -501,7 +489,6 @@ $(document).ready(function() {
         var as_user = context.params.user;
         var hl = context.params.hl;
 
-        console.log("hl=", hl);
         if (!as_user) {
           alert("Please call as a user, i.e. /room/"+room_id+"/?user=Klaus");
         }
