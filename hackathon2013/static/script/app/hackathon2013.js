@@ -103,6 +103,8 @@ var UserDetailVM = function(room_id, user_id, as_user) {
     self.loading = ko.observable(false);
 
     self.backToRoomUrl = '/room/'+room_id+'?user='+as_user;
+    self.room_id = room_id;
+    self.as_user = as_user;
 
     self.newTag = ko.observable();
     self.addNewTag = function(vm, evt) {
