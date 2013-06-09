@@ -95,7 +95,7 @@
   <ul class="tags-holder" data-bind="foreach: currentUser().tags">
     <li>
       <div style="overflow:hidden;">
-      <a>
+      <a data-bind="attr: {href: '/room/'+$parent.room_id+'?hl='+encodeURIComponent($data)+'&user='+$parent.as_user, title: $data}">
           <span class="text">
               <span data-bind="text: $data"></span>
           </span>
