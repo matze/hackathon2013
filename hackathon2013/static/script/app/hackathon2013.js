@@ -204,7 +204,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
           })
 
         .selector('.user').css(
-            {'shape' : 'rectangle'} 
+            {'shape' : 'rectangle'}
         )
         .selector('.explosion').css(
             {'shape' : 'ellipse', 'border-color' : 'yellow', 'background-opacity' : 0, 'border-width' : 3}
@@ -275,11 +275,11 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                 .done(function(response) {
                     ko.utils.arrayForEach(response.events, function(evt) {
                         console.log("ev", evt);
-                        
+
                         var user_id = evt.user.id;
-                        var has_tag = evt.tag != undefined; 
-                        var _user = evt.user;
-                        
+                        var has_tag = evt.tag !== undefined;
+                        var _user = new UserModel(evt.user);
+
 
                     // add node if user has no tag (which means, that there is a new user)
                     // otherwise, highlight user's node
@@ -287,7 +287,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                     var highlight = function( node )
                     {
                         pos = node.position();
-                        
+
                         radians_and_times = [[100, 400], [200, 600], [300, 1000]];
 
                         var add_animate_remove = function( index, rt)
@@ -316,7 +316,16 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                         // TODO do we ever reach this line?
                         console.log("need new node");
 
-                        var props = {group: 'nodes', classes: 'user  ' + _user.tags().join(' '), 'data': {'id': String(_user.id()), 'name': _user.name(), 'color': '#37' + color + '40'}}
+                        var props = {
+                            group: 'nodes',
+                            classes: 'user  ' + _user.tags().join(' '),
+                            'data': {
+                                'id': String(_user.id()),
+                                'name': _user.name(),
+                                'color': '#37' + 'f'
+                                 // + color + '40'
+                            }
+                        }
                         new_node = cy.add(props);
                         highlight(new_node);
                     }
