@@ -206,18 +206,10 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
             hl_tag = self.hl_tag
 
-            console.log("cxttap");
             var all_with_class = cy.$('.'+hl_tag);
-            console.log("all with class", hl_tag, ":", all_with_class)
+            var reset_color = function() { this.delay(1000).animate({css: {'background-color': this.data().color}}); };
 
-            all_with_class.animate({ css: {'background-color' : '#dc3522'}},
-                                   { duration: 500,
-                                     complete : function() {
-                                       all_with_class.delay(2000, function() {
-                                         all_with_class.animate({css: {'background-color': '#2a2cbb'}});
-                                       });
-                                     }
-                                   });
+            all_with_class.animate({ css: {'background-color' : '#d9cb9e'}}, {duration: 500, complete: reset_color });
         });
 
         cy.on('tap', function(e){
