@@ -46,6 +46,11 @@
       <li class="room" data-bind="css: {selected: $parent.selectedGroup() && $parent.selectedGroup() === $data}, click: $parent.selectGroup, text: name"></li>
     </ul>
 
+
+    <p style="padding-top: 40px">
+      Betritt einen Raum und zeig anderen was dich anzieht
+    </p>
+
     <h2>Dein Name</h2>
 
     <!-- ko if: errors().length -->
@@ -128,7 +133,7 @@
         <button style="float: right;" data-bind="click: showExistingTags.bind({}, false)">Verbergen</button>
         <!-- /ko -->
         <!-- ko ifnot: showExistingTags -->
-        <button style="float: right;" data-bind="click: showExistingTags.bind({}, true)">Beliebte</button>
+        <button style="float: right;" data-bind="click: showExistingTags.bind({}, true)"><i class="icon-heart"></i> Beliebte</button>
         <!-- /ko -->
 
         <div style="overflow:hidden;">

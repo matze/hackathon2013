@@ -271,9 +271,10 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         cy.on('free', function(e){
             var node = e.cyTarget;
             console.log( node.data().id );
-            console.log("moved node to", node.position());
+            var pos = node.position()
+            console.log("moved node to", pos);
 
-            $.post("/api/room/"+room_id+"/user/"+node.data().id+"/move/", {x: node.position().x, y: node.position().y})
+            $.post("/api/room/"+room_id+"/user/"+node.data().id+"/move/", pos)
             .then( function( response ){});
         });
 
