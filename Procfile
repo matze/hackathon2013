@@ -1,1 +1,1 @@
-web: gunicorn hackathon2013.wsgi
+web: python manage.py collectstatic --noinput; gunicorn --workers=4 hackathon2013.wsgi

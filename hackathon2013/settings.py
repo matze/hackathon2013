@@ -1,6 +1,6 @@
 from os.path import dirname, join, abspath
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
