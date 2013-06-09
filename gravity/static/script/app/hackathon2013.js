@@ -33,6 +33,8 @@ var UserModel = function(user_data) {
   this.id = ko.observable(user_data.id);
   this.name = ko.observable(user_data.name);
   this.tags = ko.observableArray(user_data.tags);
+  this.x = ko.observableArray(user_data.x);
+  this.y = ko.observableArray(user_data.y);
   this.myself = user_data.myself || false;
 };
 
@@ -195,7 +197,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
     /* export, so that GWT can read it :-) */
     users = self.users;
-    
+
 
 
     self.visualizationOptions = ko.observable();
@@ -351,7 +353,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                         node = cy.$("node#"+evt.user.id);
                         highlight(node);
 
-                        console.log( self.all_tags() ) 
+                        console.log( self.all_tags() )
 
                         // already has the tag? Then do nothing ...
                         if( self.all_tags()[evt.tag].indexOf(evt.user.id) == -1 )
@@ -359,7 +361,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                             // add new edges
                             connected_users = self.all_tags()[evt.tag]
                             console.log("need to connect with", connected_users)
-                            
+
                             var connect = function( index, id )
                             {
                                 new_edge = cy.add({group: 'edges', data: {source: String(evt.user.id), weight: '1', target: String(id)}});
@@ -395,7 +397,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                         }
                         new_node = cy.add(props);
                         highlight(new_node);
-                        
+
                     }
 
                         self.latestEventId(evt.id);
@@ -444,7 +446,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                 }
             });
         });
-        
+
         self.all_tags(all_tags)
 
         /* users_with_related_users: user -> [ user, [tags] ] */
