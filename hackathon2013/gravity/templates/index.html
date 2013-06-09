@@ -40,7 +40,7 @@
           <li class="room" data-bind="css: {selected: $parent.selectedGroup() && $parent.selectedGroup() === $data}, click: $parent.selectGroup, text: name"></li>
         </ul>
 
-        <h2>Name</h2>
+        <h2>Dein Name</h2>
 
         <!-- ko if: errors().length -->
         <ul class="unstyled" data-bind="foreach: errors">
@@ -50,7 +50,7 @@
 
         <form class="form-search">
             <input type="text" data-bind="value: loginName" placeholder="Name" />
-            <button type="submit" class="btn" data-bind="click: goToRoom">GO!</button>
+            <button type="submit" class="btn" data-bind="click: goToRoom">LOS!</button>
         </form>
       </div>
     </div>
@@ -67,7 +67,7 @@
           <!-- /ko -->
       </h2>
 
-      <p class="go-back"><a href="/"><i class="icon-chevron-sign-left"></i> Go back</a></p>
+      <p class="go-back"><a href="/"><i class="icon-chevron-sign-left"></i> &nbsp;Zurück</a></p>
 
       <div id="graph" data-bind="cytoscape: visualizationOptions">
         <canvas style="position: absolute; z-index: -1;" id="background" width="800" height="600"></canvas>
@@ -88,7 +88,7 @@
   </h2>
 
   <p class="go-back"><a data-bind="attr: {href: backToRoomUrl}">
-    <i class="icon-chevron-sign-left"></i> Go back</a>
+    <i class="icon-chevron-sign-left"></i> &nbsp;Zurück</a>
   </p>
 
   <!-- ko if: currentUser() && currentUser().tags().length -->
@@ -111,11 +111,10 @@
       <form>
         <input data-bind="value: newTag" placeholder="Tag" />
         <div style="overflow:hidden;">
-          <button data-bind="click: addNewTag">Add</button>
+          <button data-bind="click: addNewTag"><i class="icon-tag"></i> </button>
         </div>
       </form>
     </div>
-    <button data-bind="click: update">Update</button>
   </div>
 </div>
 </script>
