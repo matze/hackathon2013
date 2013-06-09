@@ -117,8 +117,10 @@ var UserDetailVM = function(room_id, user_id, as_user) {
     };
 
     self.latestEventId = ko.observable();
-    self.doingUpdate = ko.observable();
+    self.doingUpdate = ko.observable(false);
     self.update = function() {
+        if( self.doingUpdate() )
+            return;
         self.doingUpdate(true);
         var latestEventId = self.latestEventId();
         if (latestEventId) {
@@ -172,7 +174,6 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
             'color': '#d9cb9e',
             'text-outline-width': 4,
             'text-outline-color': 'data(color)',
-            'shape': 'rectangle',
             'height': 48,
             'width': 48,
             'font-size': 22,
@@ -180,6 +181,13 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
             'font-weight': 'bold',
             'background-color': 'data(color)' //'#374140'
           })
+
+        .selector('.user').css(
+            {'shape' : 'rectangle'} 
+        )
+        .selector('.explosion').css(
+            {'shape' : 'ellipse', 'border-color' : 'yellow', 'background-opacity' : 0, 'border-width' : 3}
+        )
         .selector('edge')
           .css({
             'target-arrow-shape': 'none',
@@ -211,9 +219,6 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
           var user_id = node.data().id;
           console.log("tap", user_id);
-
-        // TODO
-        // durch die Brust in's Knie -- wie geht das schlauer?
 
           var event = jQuery.Event("click");
           event.user_id = user_id;
@@ -255,11 +260,48 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                 .done(function(response) {
                     ko.utils.arrayForEach(response.events, function(evt) {
                         console.log("ev", evt);
-                        /*var user = self.currentUser();
-                        if (evt.user.id === user.id()) {
-                            console.log(user, user.tags, user.tags())
-                            user.tags.push(evt.tag);
-                        }*/
+                        
+                        var user_id = evt.user.id;
+                        var has_tag = evt.tag != undefined; 
+                        
+
+                    // add node if user has no tag (which means, that there is a new user)
+                    // otherwise, highlight user's node
+                    
+
+
+                    var highlight = function( node )
+                    {
+                        pos = node.position();
+                        
+                        radians_and_times = [[100, 400], [200, 600], [300, 1000]];
+
+                        var add_animate_remove = function( index, rt)
+                        {
+                            var remove_node = function()
+                            {
+                                cy.remove( this );
+                            }
+
+                            new_node = cy.add({group: 'nodes', position: pos, classes: 'explosion'});
+                            new_node.animate({ css: {'width' : rt[0], 'height' : rt[0] }},{duration: rt[1], complete: remove_node });
+                        }
+
+                        $.each(radians_and_times, add_animate_remove);
+
+                    };
+
+                    if( has_tag )
+                    {
+                        node = cy.$("node#"+evt.user.id);
+                        highlight(node);
+                    }
+
+                    else
+                    {
+                        new_node = cy.add
+                    }
+
                         self.latestEventId(evt.id);
                     });
                     self.doingUpdate(false);
@@ -307,7 +349,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
         ko.utils.arrayForEach(self.users(), function(user) {
             var color = Math.floor((user.name().charCodeAt(0) + Math.random() * 10) % 255).toString(16);
             visuOptions.elements.nodes.push(
-                {'classes': user.tags().join(' '), 'data': {'id': String(user.id()), 'name': user.name(), 'color': '#37' + color + '40'}});
+                {'classes': 'user  ' + user.tags().join(' '), 'data': {'id': String(user.id()), 'name': user.name(), 'color': '#37' + color + '40'}});
 
             ko.utils.arrayForEach(user.tags(), function(tag) {
                 if (!all_tags[tag]) {
