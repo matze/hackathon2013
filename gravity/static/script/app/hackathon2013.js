@@ -307,6 +307,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
       }
     };
 
+
     self.latestEventId = ko.observable();
     self.doingUpdate = ko.observable(false);
     self.update = function() {
