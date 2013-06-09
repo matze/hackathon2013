@@ -263,12 +263,11 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
                         
                         var user_id = evt.user.id;
                         var has_tag = evt.tag != undefined; 
+                        var _user = evt.user;
                         
 
                     // add node if user has no tag (which means, that there is a new user)
                     // otherwise, highlight user's node
-                    
-
 
                     var highlight = function( node )
                     {
@@ -299,7 +298,12 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
                     else
                     {
-                        new_node = cy.add
+                        // TODO do we ever reach this line?
+                        console.log("need new node");
+
+                        var props = {group: 'nodes', classes: 'user  ' + _user.tags().join(' '), 'data': {'id': String(_user.id()), 'name': _user.name(), 'color': '#37' + color + '40'}}
+                        new_node = cy.add(props);
+                        highlight(new_node);
                     }
 
                         self.latestEventId(evt.id);
@@ -399,7 +403,7 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
 
         				var related_tags = related_users[related_user_id];
         				var edgeCount = related_tags.length;
-        				console.log("edge",user_id, edgeCount, related_user_id);
+        				// console.log("edge",user_id, edgeCount, related_user_id);
         				visuOptions.elements.edges.push(
         						{'data': {
         							'source':  String(user_id),
@@ -420,9 +424,9 @@ var RoomDetailVM = function(room_id, as_user, hl_tag) {
     self.goToDetailView = function(vm, evt) {
         if( !vm )
             return;
-        console.log("goToDetailView");
-        console.log(evt);
-        console.log(as_user, room_id);
+        // console.log("goToDetailView");
+        // console.log(evt);
+       //  console.log(as_user, room_id);
         sammy_app.setLocation('/room/'+room_id+"/user/"+evt.user_id+"?user="+as_user);
 
     };
